@@ -78,6 +78,11 @@ const routes = [
         name:'admin_organization_student'
       },
       {
+        path:'organization/student/detail',
+        component: () => import('../views/admin/organization/organization_student_detail.vue'),
+        name:'admin_organization_student_detail'
+      },
+      {
         path:'organization/teacher/detail',
         component: () => import('../views/admin/organization/organization_teacher_detail.vue'),
         name:'admin_organization_teacher_detail'
