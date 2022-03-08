@@ -1,7 +1,8 @@
 <template>
   <el-container>
-      <el-header style="width:100%;height:70px;background:white;border-bottom:1px solid  #d7d7d7;box-sizing: border-box;align-items:center;display:flex">
-        <div style="display:flex;align-content:center;justify-content:space-around;height:40px;width:200px;"><img src='../../assets/inform_icon.svg' style="width:25px;height:30px;display:flex"><img src="../../assets/task_icon.svg" style="width:40px;height:30px;display:flex"></div>
+      <el-header style="width:100%;height:70px;background:white;border-bottom:1px solid  #d7d7d7;box-sizing: border-box;align-items:center;display:flex;justify-content:end">
+         <div style="display:flex;align-content:center;justify-content:space-around;height:40px;width:250px;align-items:center;margin-right:40px"><img src='../../assets/inform_icon.svg' style="width:25px;height:30px;"><img src="../../assets/task_icon.svg" style="width:40px;height:30px;"><div style="width:45px;height:45px;border-radius:50%;background: #016fa0;color:white;font-family: 'Arial Normal', 'Arial', sans-serif;
+  font-weight: 700;text-align:center;line-height:45px;font-size:25px">A</div></div>
       </el-header>
       <el-container>
         <el-aside style="width:75px;background: #40444d;height:calc(100vh - 70px);justify-content:center;display:flex;flex-wrap:wrap">
