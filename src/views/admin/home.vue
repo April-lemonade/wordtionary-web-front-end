@@ -28,8 +28,7 @@
                        事件
                 </div>
             </div>
-            <datepicker v-model="date"></datepicker>
-          
+           
          
       
         </div>
@@ -40,7 +39,7 @@
 </template>
 
 <script >
-import Datepicker from 'vuejs-datepicker';
+
 export default {
     data(){
         return{
