@@ -13,7 +13,7 @@
     </el-header>
     <el-container>
       <el-aside
-          style="width:75px;background: #40444d;justify-content:center;display:flex;flex-wrap:wrap">
+          style="width:75px;background: #40444d;justify-content:center;display:flex;flex-wrap:wrap;height:calc(100vh - 70px);">
         <el-scrollbar style="width: 100%">
           <div style="justify-content:center;display:flex;flex-wrap:wrap;width:100%;height:200px;margin-top:20px">
             <router-link to="/admin/home" style="justify-content:center">
@@ -85,7 +85,7 @@
 export default {}
 </script>
 
-<style>
+<style scoped>
 a {
   text-decoration: none;
   height: 60px
