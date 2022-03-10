@@ -25,8 +25,6 @@ export default {
 
   },
   mounted(){
-let elPicker=this.$refs.datepicker
-elPicker.focus()
 
   }
   
