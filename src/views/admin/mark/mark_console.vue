@@ -22,7 +22,7 @@
           </div>
         </div>
         <div :style="note" style="width: 30%;text-align: end;position: relative">
-          <div style="position:absolute;bottom:20px;right:20px;">
+          <div style="position:absolute;bottom:20px;right:20px;cursor: pointer" @click="goMark">
             批阅样卷
           </div>
         </div>
@@ -194,7 +194,7 @@ export default {
       },
       exam: {
         id: 2,
-        name: '2021-2022第2学期数学分析期末考试',
+        name: 'test',
         course: '数学分析',
         institution: '统计与数学学院',
         time: '2022/1/1 13:40 - 15:40',
@@ -547,6 +547,11 @@ export default {
     }
   },
   methods: {
+    goMark() {
+      let obj = JSON.stringify(this.exam)
+      console.log(this.exam)
+      this.$router.push({path: '/admin/mark/mark_question', query: {obj: obj}})
+    },
     toogleExpand(row) {
       this.value = []
       let $table = this.$refs.table
@@ -669,8 +674,6 @@ export default {
       this.thisExaminers = this.value
       console.log(this.thisExaminers)
       let that = this
-
-      this.tableData.find(item => item.qid = that.thisQid).push()
     }
   },
   mounted() {
@@ -781,5 +784,11 @@ export default {
 
 :deep(.el-table__expand-icon) {
   display: none;
+}
+
+:deep(.el-table__body) {
+  table-layout: fixed;
+  border-collapse: separate;
+  width: 98%;
 }
 </style>
