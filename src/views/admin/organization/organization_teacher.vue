@@ -14,8 +14,6 @@
     <el-radio :label="6">Option B</el-radio>
     <el-radio :label="9">Option C</el-radio>
   </el-radio-group>
-    <div>
-    </div>
 </div>
 <div style="width:calc(100%-400px);height:400px;display:flex;justify-content:center">
      <el-table

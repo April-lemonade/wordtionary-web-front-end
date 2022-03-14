@@ -15,7 +15,7 @@
       <el-aside
           style="width:75px;background: #40444d;justify-content:center;display:flex;flex-wrap:wrap;height:calc(100vh - 70px);">
         <el-scrollbar style="width: 100%">
-          <div style="justify-content:center;display:flex;flex-wrap:wrap;width:100%;height:200px;margin-top:20px">
+          <div style="justify-content:center;display:flex;flex-wrap:wrap;width:100%;height:100%;margin-top:20px">
             <router-link to="/admin/home" style="justify-content:center">
               <div class="navframe">
                 <img src="../../assets/home_icon.svg" style="width:25px;height:20px">

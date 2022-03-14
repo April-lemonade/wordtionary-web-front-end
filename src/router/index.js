@@ -53,6 +53,18 @@ const routes = [
     component: () => import('../views/admin/index.vue'),
     children: [
       {
+        path:"grade/detail",
+        component:()=> import('../views/admin/grade/grade_detail.vue'),
+        name:"admin_grade_detail"
+
+      },
+      {
+        path:"grade",
+        component:()=> import('../views/admin/grade/grade.vue'),
+        name:"admin_grade"
+
+      },
+      {
         path: 'home',
         component: () => import('../views/admin/home.vue'),
         name: 'admin_home'
