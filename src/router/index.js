@@ -103,6 +103,10 @@ const routes = [
         path: 'mark/mark_console',
         component: () => import('../views/admin/mark/mark_console.vue'),
         name: 'admin_mark_console'
+      },{
+        path: 'mark/mark_question',
+        component: () => import('../views/admin/mark/mark_question'),
+        name: 'admin_mark_question'
       },
       {
         path: 'log',
