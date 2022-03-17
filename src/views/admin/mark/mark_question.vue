@@ -9,7 +9,7 @@
       </div>
       <div v-for="(section,index1) in exam.paper">
         <div style="background-color: #F7F7F7;padding: 5%;text-align: center;font-weight: bold;font-size: 20px">
-          {{ section.section }}
+          第 {{ index1 + 1 }} 节
         </div>
         <div v-for="(question,index2) in section.questions">
           <div
@@ -19,7 +19,7 @@
           <div style="color: #a7a7a7;font-weight: bold">学生答案</div>
           <div
               style="border-style: solid;border-width: 1px;border-color: #D7D7D7;border-radius: 5px;margin-top: 2%;padding: 2%">
-            {{ exam.stuAns[index1][index2] }}
+            {{ exam.stuAns[exam.paper[index1].questions.length + index2] }}
           </div>
           <div style="color: #a7a7a7;font-weight: bold;margin-top: 2%">标准答案</div>
           <div
@@ -124,8 +124,8 @@ export default {
       error: 10,
       exam: {
         name: '2022学年第一学期思修期末考试',
-        stuAns: [['这是第一题的答案', '这是第二题的答案']],
-        paper: [{
+        stuAns: ['这是第一题的答案', '这是第二题的答案'],
+        paper: [/*{
           section: '第一节',
           questions: [{
             qid: '1.1',
@@ -138,7 +138,7 @@ export default {
             stdAns: '这是第二题的标准答案',
             point: 10
           }]
-        }]
+        }*/]
       },
     }
   },
@@ -159,6 +159,20 @@ export default {
     }
     this.stuScores = arr
     console.log(this.stuScores.length)
+    this.exam.paper.push({
+      section: '第一节',
+      questions: [{
+        qid: '1.1',
+        description: '什么是理想？',
+        stdAns: '这是第一题的标准答案',
+        point: 10
+      }, {
+        qid: '1.2',
+        description: '什么是信念？',
+        stdAns: '这是第二题的标准答案',
+        point: 10
+      }]
+    })
     // this.exam = eval('(' + this.$route.query.obj + ')')
   }
 }

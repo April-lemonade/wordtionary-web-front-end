@@ -40,24 +40,24 @@
                 <div style="width:100%;text-align:center">题库</div>
               </div>
             </router-link>
-            <router-link to="/admin/testpaper" style="justify-content:center">
+<!--            <router-link to="/admin/testpaper" style="justify-content:center">
               <div class="navframe">
                 <img src="../../assets/testpaper_icon.svg" style="width:20px;height:25px">
                 <div style="width:100%;text-align:center">试卷</div>
               </div>
-            </router-link>
+            </router-link>-->
             <router-link to="/admin/mark/mark" style="justify-content:center">
               <div class="navframe">
                 <img src="../../assets/correct_icon.svg" style="width:20px;height:20px">
                 <div style="width:100%;text-align:center">批阅</div>
               </div>
             </router-link>
-            <router-link to="/admin/invigilate" style="justify-content:center">
+<!--            <router-link to="/admin/invigilate" style="justify-content:center">
               <div class="navframe">
                 <img src="../../assets/invigilate_icon.svg" style="width:23px;height:23px">
                 <div style="width:100%;text-align:center">监考</div>
               </div>
-            </router-link>
+            </router-link>-->
             <router-link to="/admin/grade" style="justify-content:center">
               <div class="navframe">
                 <img src="../../assets/grade_icon.svg" style="width:25px;height:20px">

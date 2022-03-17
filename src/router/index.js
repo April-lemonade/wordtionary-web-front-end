@@ -76,7 +76,7 @@ const routes = [
       },
       {
         path: 'examnation',
-        component: () => import('../views/admin/examnation.vue'),
+        component: () => import('../views/admin/examination/examnation.vue'),
         name: 'admin_examnation'
       },
       {
@@ -103,7 +103,7 @@ const routes = [
         path: 'mark/mark_console',
         component: () => import('../views/admin/mark/mark_console.vue'),
         name: 'admin_mark_console'
-      },{
+      }, {
         path: 'mark/mark_question',
         component: () => import('../views/admin/mark/mark_question'),
         name: 'admin_mark_question'
@@ -124,6 +124,23 @@ const routes = [
       {
         path: 'home',
         component: () => import('../views/teacher/home.vue')
+      }, {
+        path: 'mark/mark',
+        component: () => import('../views/teacher/mark/mark.vue'),
+        name: 'teacher_mark'
+      },
+      {
+        path: 'mark/mark_console',
+        component: () => import('../views/teacher/mark/mark_console.vue'),
+        name: 'teacher_mark_console'
+      }, {
+        path: 'mark/mark_question',
+        component: () => import('../views/teacher/mark/mark_question'),
+        name: 'teacher_mark_question'
+      },{
+        path: 'mark/mark_example',
+        component: () => import('../views/teacher/mark/mark_example'),
+        name: 'teacher_mark_example'
       }
 
     ]
