@@ -28,7 +28,7 @@
                 <div style="width:100%;text-align:center">组织</div>
               </div>
             </router-link>
-            <router-link to="/admin/examnation" style="justify-content:center">
+            <router-link to="/admin/examination" style="justify-content:center">
               <div class="navframe">
                 <img src="../../assets/examnation_icon.svg" style="width:25px;height:20px">
                 <div style="width:100%;text-align:center">考试</div>
