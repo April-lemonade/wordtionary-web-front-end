@@ -22,9 +22,9 @@
           </div>
         </div>
         <div :style="note" style="width: 30%;text-align: end;position: relative">
-          <div style="position:absolute;bottom:20px;right:20px;cursor: pointer" @click="goMark">
-            批阅样卷
-          </div>
+          <!--          <div style="position:absolute;bottom:20px;right:20px;cursor: pointer" @click="goMark">
+                      批阅样卷
+                    </div>-->
         </div>
       </div>
       <div
@@ -34,25 +34,25 @@
           <img src="../../../assets/example_paper.png"
                style="position: absolute;top:0;right:0;transform: rotate(270deg);width: 10%"/>
         </div>
-        <!--        <div id="progress" style="width:100%;height:300px "></div>-->
-        <el-scrollbar height="200px">
-          <div style="display: flex;flex-direction: row;width: 100%">
-            <div>总进度：</div>
-            <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
-                         :stroke-width="15"
-                         :percentage="exam.progress"
-                         status="success" color="rgba(19, 137, 116, 1)"></el-progress>
-          </div>
-          <div v-for="data in tableData">
-            <div style="display: flex;flex-direction: row">
-              <div style="width: 10%">{{ data.qid }}</div>
-              <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
-                           :stroke-width="15"
-                           :percentage="data.progress"
-                           status="success" color="rgba(19, 137, 116, 1)"></el-progress>
-            </div>
-          </div>
-        </el-scrollbar>
+        <div id="progress" style="width:100%;height:300px "></div>
+        <!--        <el-scrollbar height="200px">
+                  <div style="display: flex;flex-direction: row;width: 100%">
+                    <div>总进度：</div>
+                    <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
+                                 :stroke-width="15"
+                                 :percentage="exam.progress"
+                                 status="success" color="rgba(19, 137, 116, 1)"></el-progress>
+                  </div>
+                  <div v-for="data in tableData">
+                    <div style="display: flex;flex-direction: row">
+                      <div style="width: 10%">{{ data.qid }}</div>
+                      <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
+                                   :stroke-width="15"
+                                   :percentage="data.progress"
+                                   status="success" color="rgba(19, 137, 116, 1)"></el-progress>
+                    </div>
+                  </div>
+                </el-scrollbar>-->
       </div>
     </div>
     <div
@@ -62,13 +62,13 @@
         <img src="../../../assets/example_paper.png"
              style="position: absolute;top:0;right:0;transform: rotate(270deg);width: 5%"/>
       </div>
-      <!--      <div style="width: 50%;display: flex;flex-direction: row;justify-content: space-between">
-              <div>阅卷进度：62.5%</div>
-              <div>预计完成时间：2022.2.24 16:00</div>
-            </div>-->
-      <!--      <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;" :text-inside="true" :stroke-width="20"
-                         :percentage="62.5"
-                         status="success" color="rgba(19, 137, 116, 1)"></el-progress>-->
+      <div style="width: 50%;display: flex;flex-direction: row;justify-content: space-between">
+        <div>阅卷进度：62.5%</div>
+        <div>预计完成时间：2022.2.24 16:00</div>
+      </div>
+      <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;" :text-inside="true" :stroke-width="20"
+                   :percentage="62.5"
+                   status="success" color="rgba(19, 137, 116, 1)"></el-progress>
       <!--      <div>只展示未批改完的题目
               <el-switch v-model="onlying" active-color="rgba(19, 137, 116, 1)"></el-switch>
             </div>-->
@@ -96,8 +96,8 @@
                   阅卷人：{{ examiner.name }} | 阅卷速度：{{ examiner.speed }} 题/分钟 | 批阅份数：{{ examiner.count }} |
                   预计完成时间：{{ examiner.time }}
                 </div>
-                <el-button style="margin-top: 5%" type="primary" plain @click="dialogFormVisible = true">调整阅卷人
-                </el-button>
+                <!--                <el-button style="margin-top: 5%" type="primary" plain @click="dialogFormVisible = true">调整阅卷人
+                                </el-button>-->
               </div>
               <div id="progress1"
                    style="width: 50%;height:300px;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
@@ -116,8 +116,7 @@
                     :title="item.name"
                     :width="200"
                     trigger="hover"
-                    content="this is content, this is content, this is content"
-                >
+                    content="this is content, this is content, this is content">
                   <template #reference>
                     <p>{{ item.name }}&nbsp;</p>
                   </template>
@@ -150,23 +149,19 @@
         <el-table-column label="预计完成时间" prop="time"/>
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button type="text" @click="toogleExpand(scope.row)">查看详情</el-button>
+            <el-button type="text" @click="toogleExpand(scope.row)">详情</el-button>
+            <el-button type="text" @click="judgeMark(scope.row.exampleFinished)">批阅</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-dialog title="调整阅卷人" v-model="dialogFormVisible">
-        <el-transfer
-            filterable
-            :filter-method="filterMethod"
-            :titles="['待选', '已选']"
-            filter-placeholder="请输入阅卷人姓名"
-            v-model="value"
-            :data="data">
-        </el-transfer>
-        <div slot="footer" class="dialog-footer"
-             style="margin-top: 5%;display:flex;flex-direction:row;justify-content:right">
+      <el-dialog
+          title="提示"
+          v-model="dialogFormVisible"
+          width="30%">
+        <div style="margin-bottom: 5%">在正式批阅前，您需要先通过样卷批阅测试。</div>
+        <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="editExaminer()">确 定</el-button>
+          <el-button type="primary" @click="goMark">前 往</el-button>
         </div>
       </el-dialog>
     </div>
@@ -226,6 +221,7 @@ export default {
       tableData: [
         {
           qid: '1.1',
+          exampleFinished: 0,
           time: '2022.2.24 16:00',
           progress: 59,
           description: '人生观的核心是_____。',
@@ -274,6 +270,7 @@ export default {
         },
         {
           qid: '1.2',
+          exampleFinished: 1,
           time: '2022.2.24 16:00',
           progress: 56,
           description: '人生观的核心是_____。',
@@ -322,6 +319,7 @@ export default {
         },
         {
           qid: '1.3',
+          exampleFinished: 0,
           time: '2022.2.24 16:00',
           progress: 56,
           description: '人生观的核心是_____。',
@@ -370,6 +368,7 @@ export default {
         },
         {
           qid: '1.4',
+          exampleFinished: 0,
           time: '2022.2.24 16:00',
           progress: 56,
           description: '人生观的核心是_____。',
@@ -418,6 +417,7 @@ export default {
         },
         {
           qid: '1.5',
+          exampleFinished: 0,
           time: '2022.2.24 16:00',
           progress: 56,
           description: '人生观的核心是_____。',
@@ -466,6 +466,7 @@ export default {
         },
         {
           qid: '1.6',
+          exampleFinished: 0,
           time: '2022.2.24 16:00',
           progress: 56,
           description: '人生观的核心是_____。',
@@ -514,6 +515,7 @@ export default {
         },
         {
           qid: '1.7',
+          exampleFinished: 0,
           time: '2022.2.24 16:00',
           progress: 56,
           description: '人生观的核心是_____。',
@@ -568,10 +570,18 @@ export default {
     }
   },
   methods: {
+    judgeMark(exampleFinished) {
+      if (exampleFinished == 0) {
+        this.dialogFormVisible = true
+      } else {
+        let obj = JSON.stringify(this.exam)
+        this.$router.push({path: '/teacher/mark/mark_question', query: {obj: obj, exampleFinished: 1}})
+      }
+    },
     goMark() {
       let obj = JSON.stringify(this.exam)
       console.log(this.exam)
-      this.$router.push({path: '/admin/mark/mark_question', query: {obj: obj}})
+      this.$router.push({path: '/teacher/mark/mark_example', query: {obj: obj, exampleFinished: 0}})
     },
     toogleExpand(row) {
       this.value = []
@@ -732,88 +742,88 @@ export default {
     this.exam = eval('(' + this.$route.query.obj + ')')
     console.log("ooo", this.exam.progress)
     this.exam.progress = 62.5
-    /*    let progress = this.$echarts.init(
-            document.getElementById("progress")
-        );
-        // echarts 配置
-        // 绘制图表
-        progress.setOption({
+    let progress = this.$echarts.init(
+        document.getElementById("progress")
+    );
+    // echarts 配置
+    // 绘制图表
+    progress.setOption({
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross',
+          crossStyle: {
+            color: '#999'
+          }
+        }
+      },
+      toolbox: {
+        feature: {
+          dataView: {show: true, readOnly: false},
+          magicType: {show: true, type: ['line', 'bar']},
+          restore: {show: true},
+          saveAsImage: {show: true}
+        }
+      },
+      legend: {
+        data: ['Evaporation', 'Precipitation', 'Temperature']
+      },
+      xAxis: [
+        {
+          type: 'category',
+          data: [new Date().getHours() - 4, new Date().getHours() - 3, new Date().getHours() - 2, new Date().getHours() - 1, new Date().getHours()],
+          axisPointer: {
+            type: 'shadow'
+          }
+        }
+      ],
+      yAxis: [
+        {
+          type: 'value',
+          name: '批阅份数',
+          min: 0,
+          max: 250,
+          interval: 50,
+        },
+      ],
+      series: [
+        {
+          name: 'Evaporation',
+          type: 'bar',
           tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'cross',
-              crossStyle: {
-                color: '#999'
-              }
+            valueFormatter: function (value) {
+              return value + ' ml';
             }
           },
-          toolbox: {
-            feature: {
-              dataView: {show: true, readOnly: false},
-              magicType: {show: true, type: ['line', 'bar']},
-              restore: {show: true},
-              saveAsImage: {show: true}
-            }
-          },
-          legend: {
-            data: ['Evaporation', 'Precipitation', 'Temperature']
-          },
-          xAxis: [
-            {
-              type: 'category',
-              data: [new Date().getHours() - 4, new Date().getHours() - 3, new Date().getHours() - 2, new Date().getHours() - 1, new Date().getHours()],
-              axisPointer: {
-                type: 'shadow'
-              }
-            }
-          ],
-          yAxis: [
-            {
-              type: 'value',
-              name: '批阅份数',
-              min: 0,
-              max: 250,
-              interval: 50,
-            },
-          ],
-          series: [
-            {
-              name: 'Evaporation',
-              type: 'bar',
-              tooltip: {
-                valueFormatter: function (value) {
-                  return value + ' ml';
-                }
-              },
-              data: [
-                2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0,
-              ]
-            },
-            {
-              name: 'Precipitation',
-              type: 'bar',
-              tooltip: {
-                valueFormatter: function (value) {
-                  return value + ' ml';
-                }
-              },
-              data: [
-                2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8,
-              ]
-            },
-            {
-              name: 'Temperature',
-              type: 'line',
-              yAxisIndex: 0,
-              tooltip: {
-                valueFormatter: function (value) {
-                  return value + ' °C';
-                }
-              },
-              data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5,]
-            }
+          data: [
+            2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0,
           ]
-        });*/
+        },
+        {
+          name: 'Precipitation',
+          type: 'bar',
+          tooltip: {
+            valueFormatter: function (value) {
+              return value + ' ml';
+            }
+          },
+          data: [
+            2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8,
+          ]
+        },
+        {
+          name: 'Temperature',
+          type: 'line',
+          yAxisIndex: 0,
+          tooltip: {
+            valueFormatter: function (value) {
+              return value + ' °C';
+            }
+          },
+          data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5,]
+        }
+      ]
+    });
   }
 }
 </script>

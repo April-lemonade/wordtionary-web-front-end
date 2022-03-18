@@ -33,9 +33,9 @@ const routes = [
 
       },
       {
-        path: 'examnation',
-        name: 'student_examnation',
-        component: () => import('../views/student/examnation.vue')
+        path: 'examination',
+        name: 'student_examination',
+        component: () => import('../views/student/examination.vue')
 
       },
       {
@@ -53,15 +53,15 @@ const routes = [
     component: () => import('../views/admin/index.vue'),
     children: [
       {
-        path:"grade/detail",
-        component:()=> import('../views/admin/grade/grade_detail.vue'),
-        name:"admin_grade_detail"
+        path: "grade/detail",
+        component: () => import('../views/admin/grade/grade_detail.vue'),
+        name: "admin_grade_detail"
 
       },
       {
-        path:"grade",
-        component:()=> import('../views/admin/grade/grade.vue'),
-        name:"admin_grade"
+        path: "grade",
+        component: () => import('../views/admin/grade/grade.vue'),
+        name: "admin_grade"
 
       },
       {
@@ -75,9 +75,13 @@ const routes = [
         name: 'admin_organization',
       },
       {
-        path: 'examnation',
-        component: () => import('../views/admin/examnation.vue'),
-        name: 'admin_examnation'
+        path: 'examination',
+        component: () => import('../views/admin/examination/examination.vue'),
+        name: 'admin_examination'
+      }, {
+        path: 'examination/new',
+        component: () => import('../views/admin/examination/NewExamination.vue'),
+        name: 'admin_examination_new'
       },
       {
         path: 'organization/teacher',
@@ -103,7 +107,7 @@ const routes = [
         path: 'mark/mark_console',
         component: () => import('../views/admin/mark/mark_console.vue'),
         name: 'admin_mark_console'
-      },{
+      }, {
         path: 'mark/mark_question',
         component: () => import('../views/admin/mark/mark_question'),
         name: 'admin_mark_question'
@@ -124,6 +128,23 @@ const routes = [
       {
         path: 'home',
         component: () => import('../views/teacher/home.vue')
+      }, {
+        path: 'mark/mark',
+        component: () => import('../views/teacher/mark/mark.vue'),
+        name: 'teacher_mark'
+      },
+      {
+        path: 'mark/mark_console',
+        component: () => import('../views/teacher/mark/mark_console.vue'),
+        name: 'teacher_mark_console'
+      }, {
+        path: 'mark/mark_question',
+        component: () => import('../views/teacher/mark/mark_question'),
+        name: 'teacher_mark_question'
+      }, {
+        path: 'mark/mark_example',
+        component: () => import('../views/teacher/mark/mark_example'),
+        name: 'teacher_mark_example'
       }
 
     ]
