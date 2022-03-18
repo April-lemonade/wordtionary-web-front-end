@@ -12,7 +12,7 @@ module.exports = {
 	            target:'http://121.196.198.132:7003',
 	            changeOrigin:true,//允许跨域
 	            pathRewrite:{
-	                '^/api':''
+	                '^/':''
 	            }
 	        }
 	    }
