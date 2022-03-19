@@ -16,7 +16,7 @@
         style="width: 77%;display: flex;justify-content: center;flex-direction: column;align-items: center;height: calc(100vh)">
       <el-scrollbar style="width: 100%;">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" label-position="top"
-                 v-if="step==1" style="width: 90%;margin-left: 5%">
+                 v-if="step==1" style="width: 90%;margin-left: 5%;margin-top: 5%">
           <el-row style="margin-bottom: 3%">
             <el-col :span="10">
               <el-form-item label="考试名称" prop="name">
@@ -27,49 +27,51 @@
           <el-row style="margin-bottom: 3%">
             <el-col :span="14">
               <el-form-item label="学院" prop="institution">
-                <el-select size="medium" v-model="ruleForm.institution" placeholder="请选择学院">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
+                <el-select size="medium" v-model="ruleForm.institution" placeholder="请选择学院" @change="getCourse">
+                  <el-option v-for="institution in institutions" :value="institution.id" :key="institution.id"
+                             :label="institution.facultyName"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="8">
               <el-form-item label="课程" prop="course">
                 <el-select size="medium" v-model="ruleForm.course" placeholder="请选择课程">
-                  <el-option label="区域一" value="shanghai"></el-option>
-                  <el-option label="区域二" value="beijing"></el-option>
+                  <el-option v-for="course in courses" :value="course.id" :key="course.id"
+                             :label="course.course"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row style="margin-bottom: 3%">
-            <el-col :span="14">
-              <el-form-item label="考试开始时间" required>
-                <el-col :span="8">
-                  <el-form-item prop="date1">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.date1" size="medium"
+            <el-col :span="20">
+              <el-form-item label="考试时间" required>
+                <el-col :span="6">
+                  <el-form-item prop="date">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.date" size="medium"
                                     value-format="YYYY-MM-DD"
                                     style="width: 98%;"></el-date-picker>
                   </el-form-item>
                 </el-col>
-                <el-col :span="8">
-                  <el-form-item prop="date2">
-                    <el-time-picker size="medium" placeholder="选择时间" v-model="ruleForm.date2" value-format="HH:mm:ss"
+                <el-col :span="6">
+                  <el-form-item prop="startTime">
+                    <el-time-picker size="medium" placeholder="选择时间" v-model="ruleForm.startTime"
+                                    value-format="HH:mm:ss"
+                                    style="width: 98%;"></el-time-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col class="line" :span="2">-</el-col>
+                <el-col :span="6">
+                  <el-form-item prop="endTime">
+                    <el-time-picker size="medium" placeholder="选择时间" v-model="ruleForm.endTime" value-format="HH:mm:ss"
                                     style="width: 98%;"></el-time-picker>
                   </el-form-item>
                 </el-col>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
-              <el-form-item label="考试用时" prop="duration" required>
-                <el-input size="medium" v-model="ruleForm.duration" style="width: 60%"></el-input>
-                min
-              </el-form-item>
-            </el-col>
           </el-row>
           <el-row style="margin-bottom: 3%;display: flex;flex-direction: row;justify-content: flex-end">
             <el-button style="margin-left:3%;margin-top: 3%" size="medium">取消</el-button>
-            <el-button type="primary" style="margin-left:3%;margin-top: 3%" size="medium" @click="step=step+1">下一步
+            <el-button type="primary" style="margin-left:3%;margin-top: 3%" size="medium" @click="goNext">下一步
             </el-button>
           </el-row>
         </el-form>
@@ -182,7 +184,7 @@
                     <el-input @change="countQuestion" v-model="ruleForm.paper[index].questionScore"></el-input>
                   </el-form-item>
                   <el-form-item label="题目类型">
-                    <el-select v-model="ruleForm.paper[index].questionType" placeholder="活动区域">
+                    <el-select v-model="ruleForm.paper[index].questionType" placeholder="题型">
                       <el-option label="区域一" value="shanghai"></el-option>
                       <el-option label="区域二" value="beijing"></el-option>
                     </el-select>
@@ -256,7 +258,7 @@
                 <div style="margin-bottom: 2%">第{{ index + 1 }}节</div>
                 <el-form :inline="true" :model="ruleForm.paper[index]">
                   <el-form-item label="题型">
-                    <el-select v-model="ruleForm.paper[index].type" placeholder="请选择">
+                    <el-select v-model="ruleForm.paper[index].questionType" placeholder="请选择" @change="getQuestion">
                       <el-option
                           v-for="item in questionTypes"
                           :key="item.value"
@@ -320,22 +322,45 @@ export default {
     Delete
   },
   name: "NewExamination",
+  mounted() {
+    let that = this
+    this.$axios.get('http://121.196.198.132:7003/faculty/list', {headers: {'Authorization': 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX3R5cGUiOjMsImNyZWF0ZWQiOjE2NDc2NTg2NzEyMjQsInVzZXJfYWNjb3VudCI6ImFkbWluIiwiZXhwIjoxNjQ4ODY4MjcxfQ.6bfeYtwoWEQx7EmXRvm-eE8NOWm-Jog_Ix1OFGvsdIyCT1ZFeOvYzGixlrJqV4K9WexiEOLtUp-c0hJoicrO3A'}}).then(res => {
+      that.institutions = res.data.data
+      console.log(that.institutions[0])
+    })
+
+    this.$axios.post(`http://121.196.198.132:7004/question/list?type=1`, {'id': 1}, {
+          headers: {
+            'content-type': 'application/json',
+            'Authorization': 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX3R5cGUiOjMsImNyZWF0ZWQiOjE2NDc2NTg2NzEyMjQsInVzZXJfYWNjb3VudCI6ImFkbWluIiwiZXhwIjoxNjQ4ODY4MjcxfQ.6bfeYtwoWEQx7EmXRvm-eE8NOWm-Jog_Ix1OFGvsdIyCT1ZFeOvYzGixlrJqV4K9WexiEOLtUp-c0hJoicrO3A'
+          }
+        }
+    ).then(res => {
+      if (res.data.code == 200) {
+        console.log(res.data.data)
+        this.allQuestions = res.data.data.data
+      } else {
+        console.log(res)
+      }
+    })
+  },
   data() {
     return {
-      height: 'calc(100vh)',
       step: 1,
+      allQuestions: [],
       ruleForm: {
-        name: 'test',
+        name: '',
         institution: '',
         course: '',
-        date1: '',
-        date2: '',
-        duration: 0,
+        date: '',
+        startTime: '',
+        endTime: '',
+        // duration: '',
         paper: []
       },
       rules: {
         name: [
-          {required: true, message: '请输入活动名称', trigger: 'blur'}
+          {required: true, message: '请输入考试名称', trigger: 'blur'}
         ],
         institution: [
           {required: true, message: '请选择学院', trigger: 'change'}
@@ -343,20 +368,27 @@ export default {
         course: [
           {required: true, message: '请选择课程', trigger: 'change'}
         ],
-        date1: [
+        date: [
           {type: 'date', required: true, message: '请选择日期', trigger: 'change'}
         ],
-        date2: [
-          {type: 'date', required: true, message: '请选择时间', trigger: 'change'}
+        startTime: [
+          {required: true, message: '请选择时间', trigger: 'change'}
         ],
-        duration: [
-          {type: 'number', required: true, message: '请输入考试用时', trigger: 'blur'}
+        endTime: [
+          {required: true, message: '请选择时间', trigger: 'change'}
         ],
+        /*duration: [
+          {required: true, message: '请输入考试用时', trigger: 'blur'},
+          {type: 'number', message: '考试时长必须为数字值'}
+        ],*/
       },
       sectionCount: 2,
       questionCount: 0,
       difficulty: 0.0,
       totalScore: 0,
+      institutions: [],
+      courses: [],
+      institution: '',
       props: {multiple: true},
       options: [{
         value: 1,
@@ -387,15 +419,34 @@ export default {
         label: '选择题'
       }, {
         value: 2,
+        label: '判断题'
+      }, {
+        value: 3,
         label: '填空题'
       }],
       questionData: [{
         id: 1,
-
+        content: "操作员接口是操作系统为用户提供的使用计算机系统的手段之一，该接口是指"
       }]
     }
   },
   methods: {
+    getQuestion() {
+      // this.allQuestions.find(question => question.)
+    },
+    goNext() {
+      this.step = 2
+      console.log(this.ruleForm)
+    },
+    getCourse() {
+      console.log(this.ruleForm.institution)
+      let that = this
+      this.$axios.get('http://121.196.198.132:7003/course/list?facultyId=' + that.ruleForm.institution, {headers: {'Authorization': 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX3R5cGUiOjMsImNyZWF0ZWQiOjE2NDc2NTg2NzEyMjQsInVzZXJfYWNjb3VudCI6ImFkbWluIiwiZXhwIjoxNjQ4ODY4MjcxfQ.6bfeYtwoWEQx7EmXRvm-eE8NOWm-Jog_Ix1OFGvsdIyCT1ZFeOvYzGixlrJqV4K9WexiEOLtUp-c0hJoicrO3A'}}).then(res => {
+        that.courses = res.data.data.data
+        // console.log(res.data.data.data)
+        that.ruleForm.course = ''
+      })
+    },
     countQuestion() {
       this.questionCount = 0
       this.totalScore = 0
@@ -408,6 +459,15 @@ export default {
     },
     handleChange(value) {
       console.log(value);
+      if (value == 1) {
+
+      }
+      if (value == 2) {
+
+      }
+      if (value == 3) {
+
+      }
     },
     removeSection(index) {
       this.ruleForm.paper.splice(index, 1)
@@ -427,7 +487,7 @@ export default {
         this.ruleForm.paper.push({
           questionCount: 0,
           questionScore: '0',
-          questionType: '',
+          questionType: 1,
           questionIds: [],
         })
       }
@@ -475,5 +535,9 @@ export default {
   background-color: #42b983;
   color: white;
   padding: 5px;
+}
+
+.el-col.el-col-2.line {
+  text-align: center;
 }
 </style>
