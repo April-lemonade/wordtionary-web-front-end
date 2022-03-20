@@ -276,33 +276,65 @@
                 </el-icon>
               </div>
               <el-table
-                  ref="multipleTable"
-                  :data="tableData"
+                  ref="table"
+                  :data="allQuestions"
                   tooltip-effect="dark"
                   style="width: 100%"
                   @selection-change="handleSelectionChange">
+                <el-table-column type="expand">
+                  <template #default="props">
+                    <div style="display: flex;flex-direction: row">
+                      <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
+                        <div
+                            style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
+                          <div style="font-weight: bold">题目： &nbsp; {{ props.row.content }}</div>
+                          <!--                          <div style="border-style: solid;border-width: 2px;border-radius: 5px;font-weight: bold">
+                                                      {{ props.row.type }}
+                                                    </div>-->
+                          <!--                          <div style="font-weight: bold">分值: {{ props.row.score }}</div>-->
+                        </div>
+                        <div v-if="props.row.type ==1">
+                          A. {{ questionDetail.a }}
+                          B. {{ questionDetail.b }}
+                          C. {{ questionDetail.c }}
+                          D. {{ questionDetail.d }}
+                        </div>
+                        <div style="font-weight: bold">正确答案: {{ questionDetail.answer }}</div>
+                        <div>
+                          作者：{{ props.row.name }} | 上传时间：{{ props.row.createTime }}
+                        </div>
+                        <div>难度系数：{{ props.row.difficulty }} |
+                          知识点：{{ props.row.outline }} | 使用次数：{{ props.row.usageTimes }}
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </el-table-column>
                 <el-table-column
                     type="selection"
                     width="55">
                 </el-table-column>
                 <el-table-column
-                    prop="description"
+                    prop="content"
                     label="描述"
                     width="240">
                 </el-table-column>
                 <el-table-column
-                    prop="point"
+                    prop="outline"
                     label="知识点"
                     width="180">
                 </el-table-column>
                 <el-table-column
-                    prop="date"
+                    prop="createTime"
                     label="出题时间"
                     width="140">
                 </el-table-column>
                 <el-table-column
                     label="操作"
                     width="130">
+                  <template #default="scope">
+                    <el-button type="text" @click="toogleExpand(scope.row)">查看详情</el-button>
+                  </template>
                 </el-table-column>
               </el-table>
             </div>
@@ -324,23 +356,10 @@ export default {
   name: "NewExamination",
   mounted() {
     let that = this
-    this.$axios.get('http://121.196.198.132:7003/faculty/list', {headers: {'Authorization': 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX3R5cGUiOjMsImNyZWF0ZWQiOjE2NDc2NTg2NzEyMjQsInVzZXJfYWNjb3VudCI6ImFkbWluIiwiZXhwIjoxNjQ4ODY4MjcxfQ.6bfeYtwoWEQx7EmXRvm-eE8NOWm-Jog_Ix1OFGvsdIyCT1ZFeOvYzGixlrJqV4K9WexiEOLtUp-c0hJoicrO3A'}}).then(res => {
-      that.institutions = res.data.data
-      console.log(that.institutions[0])
-    })
-
-    this.$axios.post(`http://121.196.198.132:7004/question/list?type=1`, {'id': 1}, {
-          headers: {
-            'content-type': 'application/json',
-            'Authorization': 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX3R5cGUiOjMsImNyZWF0ZWQiOjE2NDc2NTg2NzEyMjQsInVzZXJfYWNjb3VudCI6ImFkbWluIiwiZXhwIjoxNjQ4ODY4MjcxfQ.6bfeYtwoWEQx7EmXRvm-eE8NOWm-Jog_Ix1OFGvsdIyCT1ZFeOvYzGixlrJqV4K9WexiEOLtUp-c0hJoicrO3A'
-          }
-        }
-    ).then(res => {
-      if (res.data.code == 200) {
-        console.log(res.data.data)
-        this.allQuestions = res.data.data.data
-      } else {
-        console.log(res)
+    this.$getRequest('/user/faculty/list').then(res => {
+      if (res.data) {
+        that.institutions = res.data
+        console.log(that.institutions[0])
       }
     })
   },
@@ -355,7 +374,6 @@ export default {
         date: '',
         startTime: '',
         endTime: '',
-        // duration: '',
         paper: []
       },
       rules: {
@@ -389,6 +407,7 @@ export default {
       institutions: [],
       courses: [],
       institution: '',
+      questionDetail: {},
       props: {multiple: true},
       options: [{
         value: 1,
@@ -423,15 +442,35 @@ export default {
       }, {
         value: 3,
         label: '填空题'
-      }],
-      questionData: [{
-        id: 1,
-        content: "操作员接口是操作系统为用户提供的使用计算机系统的手段之一，该接口是指"
       }]
     }
   },
   methods: {
-    getQuestion() {
+    toogleExpand(row) {
+      this.questionDetail = {}
+      let $table = this.$refs.table
+      let that = this
+      this.$getRequest('/exam/question/info/' + row.id).then(res => {
+        if (res.data) {
+          that.questionDetail = res.data
+          console.log(res.data)
+        }
+      })
+      // this.allQuestions.map((item) => {
+      //   if (row.id != item.id) {
+      //     $table.toggleRowExpansion(item, false)
+      //   }
+      // })
+      $table.toggleRowExpansion(row)
+    },
+    getQuestion(value) {
+      let that = this
+      this.$postRequest('/exam/question/list?type=' + value, {'courseId': that.ruleForm.course}).then(res => {
+        if (res.data) {
+          that.allQuestions = res.data.data
+          console.log(res.data)
+        }
+      })
       // this.allQuestions.find(question => question.)
     },
     goNext() {
@@ -441,10 +480,11 @@ export default {
     getCourse() {
       console.log(this.ruleForm.institution)
       let that = this
-      this.$axios.get('http://121.196.198.132:7003/course/list?facultyId=' + that.ruleForm.institution, {headers: {'Authorization': 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX3R5cGUiOjMsImNyZWF0ZWQiOjE2NDc2NTg2NzEyMjQsInVzZXJfYWNjb3VudCI6ImFkbWluIiwiZXhwIjoxNjQ4ODY4MjcxfQ.6bfeYtwoWEQx7EmXRvm-eE8NOWm-Jog_Ix1OFGvsdIyCT1ZFeOvYzGixlrJqV4K9WexiEOLtUp-c0hJoicrO3A'}}).then(res => {
-        that.courses = res.data.data.data
-        // console.log(res.data.data.data)
-        that.ruleForm.course = ''
+      this.$getRequest('/user/course/list?facultyId=' + that.ruleForm.institution).then(res => {
+        if (res.data) {
+          that.courses = res.data.data
+          that.ruleForm.course = ''
+        }
       })
     },
     countQuestion() {
@@ -484,6 +524,13 @@ export default {
         })
       }
       if (this.step == 4) {
+        let that = this
+        this.$postRequest('/exam/question/list?type=1', {'courseId': that.ruleForm.course}).then(res => {
+          if (res.data) {
+            that.allQuestions = res.data.data
+            console.log(res.data)
+          }
+        })
         this.ruleForm.paper.push({
           questionCount: 0,
           questionScore: '0',

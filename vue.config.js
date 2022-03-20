@@ -9,7 +9,7 @@ module.exports = {
 	    	// 当访问到 api 开头的接口时走下面的内容
 	        '/api':{
 	        	// 最终想要访问的地址
-	            target:'http://121.196.198.132:7003',
+	            target:'http://121.196.198.132:7002',
 	            changeOrigin:true,//允许跨域
 	            pathRewrite:{
 	                '^/':''
