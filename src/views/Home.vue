@@ -29,7 +29,7 @@ export default {
 
   },
   mounted(){
-    this.$axios.get('http://121.196.198.132:7003/auth/login?account=1912190001&pwd=1912190001').then(res=>{
+    this.$axios.get('api/auth/login?account=1912190001&pwd=1912190001').then(res=>{
       if(res.data.code==200){
         console.log(res.data.data)
         
