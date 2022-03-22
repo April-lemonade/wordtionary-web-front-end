@@ -2,7 +2,7 @@
   <div class="home">
    <div style="height:200px;width:400px;background:yellow;display:flex;flex-direction:row">
      <div style="height:100px;width:200px;background:green;align-self:end"></div>
-     
+
   </div>
   <div id="myChart" :style="{ width: '1200px', height: '500px' }"></div>
   <el-icon><search/></el-icon>
@@ -18,25 +18,43 @@ export default {
   name: 'Home',
   components: {
     HelloWorld,
- 
+
   },
   setup(){
     return{
-      
+
     }
   },
   methods(){
 
   },
   mounted(){
-    this.$axios.get('http://121.196.198.132:7002/user/auth/login?account=1912190001&pwd=1912190001').then(res=>{
-      if(res.data.code==200){
-        console.log(res.data.data)
-        
-      }else{
+    this.$getRequest('/user/auth/login?account=1912190001&pwd=1912190001').then(res=>{
+      if (res) {
         console.log(res)
       }
     })
+    /*this.$axios.get('http://121.196.198.132:7002/user/auth/login?account=1912190001&pwd=1912190001').then(res=>{
+      if(res){
+        console.log(res)
+
+      }else{
+        console.log(res)
+      }
+    })*/
+
+    /*this.$axios.get('http://121.196.198.132:7002/user/faculty/list',{
+      headers:{
+        'Authorization' : 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX3R5cGUiOjMsImNyZWF0ZWQiOjE2NDc3NDU1NjM5NTYsInVzZXJfYWNjb3VudCI6ImFkbWluIiwiZXhwIjoxNjQ4OTU1MTYzfQ.HFPxc1BlEw_zS6QSL9KyTR0j2qzIAPsbhC_br1UGgqu9_TPHLzDrqo9odJrwHJ97lKQzRn-r1shTLLgMy6Rnnw'
+      }
+    }).then(res=>{
+      if(res){
+        console.log(res)
+
+      }else{
+        console.log(res)
+      }
+    })*/
 
       let myChart = this.$echarts.init(
           document.getElementById("myChart")
@@ -61,7 +79,7 @@ export default {
     }
 
   }
-  
+
 
 </script>
 <style scoped>
