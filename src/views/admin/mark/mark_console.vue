@@ -4,21 +4,21 @@
       <div
           style="width:42%;display: flex;flex-direction: row;border-style: solid;padding-top: 3%;padding-left:3%;border-width: 1px;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);border-color: #D7D7D7;margin-right: 1%">
         <div style="display:flex;flex-direction: column;margin-bottom: 2%;width: 70%">
-          <div style="font-weight: bold;font-size: 18px;margin-bottom: 20%">{{ exam.name }}</div>
+          <div style="font-weight: bold;font-size: 18px;margin-bottom: 20%">{{ exam.content }}</div>
           <div class="exam_info">考试时间
-            <div class="exam_info_content">{{ exam.time }}</div>
+            <div class="exam_info_content">{{ exam.examTime }}</div>
           </div>
           <div class="exam_info">考试课程
             <div class="exam_info_content">{{ exam.course }}</div>
           </div>
           <div class="exam_info">开课学院
-            <div class="exam_info_content">{{ exam.institution }}</div>
+            <div class="exam_info_content">{{ exam.facultyName }}</div>
           </div>
           <div class="exam_info">总节数&nbsp;&nbsp;&nbsp;
-            <div class="exam_info_content">4</div>
+            <div class="exam_info_content">{{ section.length }}</div>
           </div>
           <div class="exam_info">总题数&nbsp;&nbsp;&nbsp;
-            <div class="exam_info_content">56</div>
+            <div class="exam_info_content">{{ section[section.length - 1] }}</div>
           </div>
         </div>
         <div :style="note" style="width: 30%;text-align: end;position: relative">
@@ -223,6 +223,8 @@ export default {
       // onlying: false,
       dialogFormVisible: false,
       thisQid: 0,
+      section: [],
+      question: [],
       tableData: [
         {
           qid: '1.1',
@@ -576,6 +578,7 @@ export default {
     toogleExpand(row) {
       this.value = []
       let $table = this.$refs.table
+      console.log('dsd', $table)
       this.thisExaminers = row.examiners
       this.thisQid = row.qid
       console.log(this.thisExaminers)
@@ -728,92 +731,12 @@ export default {
     }
   },
   mounted() {
+    let that = this
     console.log(this.$route.query.obj)
     this.exam = eval('(' + this.$route.query.obj + ')')
-    console.log("ooo", this.exam.progress)
-    this.exam.progress = 62.5
-    /*    let progress = this.$echarts.init(
-            document.getElementById("progress")
-        );
-        // echarts 配置
-        // 绘制图表
-        progress.setOption({
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'cross',
-              crossStyle: {
-                color: '#999'
-              }
-            }
-          },
-          toolbox: {
-            feature: {
-              dataView: {show: true, readOnly: false},
-              magicType: {show: true, type: ['line', 'bar']},
-              restore: {show: true},
-              saveAsImage: {show: true}
-            }
-          },
-          legend: {
-            data: ['Evaporation', 'Precipitation', 'Temperature']
-          },
-          xAxis: [
-            {
-              type: 'category',
-              data: [new Date().getHours() - 4, new Date().getHours() - 3, new Date().getHours() - 2, new Date().getHours() - 1, new Date().getHours()],
-              axisPointer: {
-                type: 'shadow'
-              }
-            }
-          ],
-          yAxis: [
-            {
-              type: 'value',
-              name: '批阅份数',
-              min: 0,
-              max: 250,
-              interval: 50,
-            },
-          ],
-          series: [
-            {
-              name: 'Evaporation',
-              type: 'bar',
-              tooltip: {
-                valueFormatter: function (value) {
-                  return value + ' ml';
-                }
-              },
-              data: [
-                2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0,
-              ]
-            },
-            {
-              name: 'Precipitation',
-              type: 'bar',
-              tooltip: {
-                valueFormatter: function (value) {
-                  return value + ' ml';
-                }
-              },
-              data: [
-                2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8,
-              ]
-            },
-            {
-              name: 'Temperature',
-              type: 'line',
-              yAxisIndex: 0,
-              tooltip: {
-                valueFormatter: function (value) {
-                  return value + ' °C';
-                }
-              },
-              data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5,]
-            }
-          ]
-        });*/
+    console.log("ooo", this.exam)
+    this.section = this.exam.section.split(',')
+    // this.question = this.exam.question.split(',')
   }
 }
 </script>

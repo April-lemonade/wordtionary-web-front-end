@@ -4,11 +4,11 @@
         style="border-right-style: solid;border-right-width: 1px;height:calc(100vh);padding-left: 5%;padding-right: 5%;border-right-color: #D7D7D7;width: 20%;display: flex;flex-direction: column">
       <div style="margin-top: 10%;font-size: 20px;font-weight: bold">步骤：</div>
       <div style="display: flex;flex-direction: row;margin-top: 5%">
-        <div :class="step==1?'active':'inactive'">1</div>
+        <div :class="step===1?'active':'inactive'">1</div>
         <div style="padding: 10px">填写基本信息</div>
       </div>
       <div style="display: flex;flex-direction: row;margin-top: 5%">
-        <div :class="step!=1?'active':'inactive'">2</div>
+        <div :class="step!==1?'active':'inactive'">2</div>
         <div style="padding: 10px">组卷</div>
       </div>
     </div>
@@ -16,7 +16,7 @@
         style="width: 77%;display: flex;justify-content: center;flex-direction: column;align-items: center;height: calc(100vh)">
       <el-scrollbar style="width: 100%;">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" label-position="top"
-                 v-if="step==1" style="width: 90%;margin-left: 5%;margin-top: 5%">
+                 v-if="step===1" style="width: 90%;margin-left: 5%;margin-top: 5%">
           <el-row style="margin-bottom: 3%">
             <el-col :span="10">
               <el-form-item label="考试名称" prop="name">
@@ -27,7 +27,8 @@
           <el-row style="margin-bottom: 3%">
             <el-col :span="14">
               <el-form-item label="学院" prop="institution">
-                <el-select size="medium" v-model="ruleForm.institution" placeholder="请选择学院" @change="getCourse">
+                <el-select size="medium" v-model="ruleForm.institution" placeholder="请选择学院" @change="getCourse"
+                           value-key="facultyName">
                   <el-option v-for="institution in institutions" :value="institution.id" :key="institution.id"
                              :label="institution.facultyName"></el-option>
                 </el-select>
@@ -35,7 +36,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="课程" prop="course">
-                <el-select size="medium" v-model="ruleForm.course" placeholder="请选择课程">
+                <el-select size="medium" v-model="ruleForm.course" placeholder="请选择课程" @change="getCourseName">
                   <el-option v-for="course in courses" :value="course.id" :key="course.id"
                              :label="course.course"></el-option>
                 </el-select>
@@ -71,11 +72,11 @@
           </el-row>
           <el-row style="margin-bottom: 3%;display: flex;flex-direction: row;justify-content: flex-end">
             <el-button style="margin-left:3%;margin-top: 3%" size="medium">取消</el-button>
-            <el-button type="primary" style="margin-left:3%;margin-top: 3%" size="medium" @click="goNext">下一步
+            <el-button type="primary" style="margin-left:3%;margin-top: 3%" size="medium" @click="step = 2">下一步
             </el-button>
           </el-row>
         </el-form>
-        <div v-if="step==2" style="width: 90%;margin-left: 5%">
+        <div v-if="step===2" style="width: 90%;margin-left: 5%">
           <div
               style="width: 100%;background-color: #F7F7F7;display:flex;justify-content:center;padding: 1%;border-radius: 10px">
             <div style="width: 100%;background-color: #D7D7D7;border-radius: 10px;padding: 1%">
@@ -86,21 +87,17 @@
                     <div style="display: flex;flex-direction: row;width: 100%;margin-bottom: 2%">
                       <div style="width: 50%;display: flex;flex-direction: row">
                         <div style="font-weight: bold;margin-right: 5%">学院</div>
-                        <div>{{ ruleForm.institution }}</div>
+                        <div>{{ ruleForm.institutionName }}</div>
                       </div>
                       <div style="width: 50%;display: flex;flex-direction: row">
-                        <div style="font-weight: bold;margin-right: 5%">考试开始时间</div>
-                        <div>{{ ruleForm.date1 }} {{ ruleForm.date2 }}</div>
+                        <div style="font-weight: bold;margin-right: 5%">考试时间</div>
+                        <div>{{ ruleForm.startTime }} {{ ruleForm.endTime }}</div>
                       </div>
                     </div>
                     <div style="display: flex;flex-direction: row;width: 100%;margin-bottom: 3%">
                       <div style="width: 50%;display: flex;flex-direction: row">
                         <div style="font-weight: bold;margin-right: 5%">课程</div>
-                        <div>{{ ruleForm.course }}</div>
-                      </div>
-                      <div style="width: 50%;display: flex;flex-direction: row">
-                        <div style="font-weight: bold;margin-right: 5%;width: 100px">考试时长</div>
-                        <div>{{ ruleForm.duration }}</div>
+                        <div>{{ ruleForm.courseName }}</div>
                       </div>
                     </div>
                   </div>
@@ -118,7 +115,7 @@
             </div>
             <div
                 style="width: 100px;height:100px;border-radius: 10px;display:flex;flex-direction: column;align-items: center;justify-content: center;border-style: solid;border-width: 1px;border-color: #D7D7D7"
-                @click="step = 4">
+                @click="goNext">
               <img style="width: 40px;height: 45px" src="../../../assets/byhand.png"/>
               <div>手动组卷</div>
             </div>
@@ -157,7 +154,7 @@
             </div>
           </div>
           <div style="display: flex;flex-direction: row">
-            <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="step=2">上一步</el-button>
+            <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="goPrevious">上一步</el-button>
             <el-button style="margin-left:3%;margin-top: 3%" size="medium" type="primary">开始组卷</el-button>
             <el-button type="primary" size="medium" style="margin-left:3%;margin-top: 3%" @click="addSection">
               <el-icon class="el-icon--right">
@@ -206,7 +203,7 @@
             </div>
           </div>
         </div>
-        <div v-if="step == 4" style="width: 90%;display: flex;flex-direction: column;margin: 5%">
+        <div v-if="step === 4" style="width: 90%;display: flex;flex-direction: column;margin: 5%">
           <div
               style="padding: 15px;border-radius: 8px;background-color: #fdfdfe;box-sizing: border-box;box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.35);">
             <div style="font-size: 20px;font-weight: bold;margin-bottom: 5%">试卷统计信息</div>
@@ -235,10 +232,6 @@
                 <div style="width: 100px">总分数</div>
                 <div class="num">{{ sectionCount }}</div>
               </div>
-              <!--            <div style="display: flex;flex-direction: row">
-                            <div style="width: 100px">知识覆盖率</div>
-                            <div>{{ difficulty }}</div>
-                          </div>-->
             </div>
           </div>
           <div style="display: flex;flex-direction: row">
@@ -276,34 +269,27 @@
                 </el-icon>
               </div>
               <el-table
-                  ref="table"
+                  ref="table1"
                   :data="allQuestions"
-                  tooltip-effect="dark"
-                  style="width: 100%"
+                  style="width: 98%"
                   @selection-change="handleSelectionChange">
                 <el-table-column type="expand">
                   <template #default="props">
                     <div style="display: flex;flex-direction: row">
-                      <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
+                      <div style="width: 98%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
                         <div
                             style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
                           <div style="font-weight: bold">题目： &nbsp; {{ props.row.content }}</div>
-                          <!--                          <div style="border-style: solid;border-width: 2px;border-radius: 5px;font-weight: bold">
-                                                      {{ props.row.type }}
-                                                    </div>-->
-                          <!--                          <div style="font-weight: bold">分值: {{ props.row.score }}</div>-->
                         </div>
-                        <div v-if="props.row.type ==1">
-                          A. {{ questionDetail.a }}
-                          B. {{ questionDetail.b }}
-                          C. {{ questionDetail.c }}
-                          D. {{ questionDetail.d }}
+                        <div v-if="props.row.type ==1" style="display: flex;flex-direction: column">
+                          <div>A. {{ questionDetail.a }}</div>
+                          <div>B. {{ questionDetail.b }}</div>
+                          <div>C. {{ questionDetail.c }}</div>
+                          <div>D. {{ questionDetail.d }}</div>
                         </div>
                         <div style="font-weight: bold">正确答案: {{ questionDetail.answer }}</div>
                         <div>
-                          作者：{{ props.row.name }} | 上传时间：{{ props.row.createTime }}
-                        </div>
-                        <div>难度系数：{{ props.row.difficulty }} |
+                          作者：{{ props.row.name }} | 上传时间：{{ props.row.createTime }} | 难度系数：{{ props.row.difficulty }} |
                           知识点：{{ props.row.outline }} | 使用次数：{{ props.row.usageTimes }}
                         </div>
                       </div>
@@ -312,7 +298,7 @@
                 </el-table-column>
                 <el-table-column
                     type="selection"
-                    width="55">
+                    width="30">
                 </el-table-column>
                 <el-table-column
                     prop="content"
@@ -331,9 +317,9 @@
                 </el-table-column>
                 <el-table-column
                     label="操作"
-                    width="130">
+                    width="80">
                   <template #default="scope">
-                    <el-button type="text" @click="toogleExpand(scope.row)">查看详情</el-button>
+                    <el-button type="text" @click="toogleExpand(scope.row)">详情</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -370,7 +356,9 @@ export default {
       ruleForm: {
         name: '',
         institution: '',
+        institutionName: '',
         course: '',
+        courseName: '',
         date: '',
         startTime: '',
         endTime: '',
@@ -395,10 +383,6 @@ export default {
         endTime: [
           {required: true, message: '请选择时间', trigger: 'change'}
         ],
-        /*duration: [
-          {required: true, message: '请输入考试用时', trigger: 'blur'},
-          {type: 'number', message: '考试时长必须为数字值'}
-        ],*/
       },
       sectionCount: 2,
       questionCount: 0,
@@ -406,6 +390,8 @@ export default {
       totalScore: 0,
       institutions: [],
       courses: [],
+      questions: [],
+      section: [],
       institution: '',
       questionDetail: {},
       props: {multiple: true},
@@ -446,22 +432,47 @@ export default {
     }
   },
   methods: {
+    handleSelectionChange(value) {
+      for (let i = 0; i < value.length; i++) {
+        this.questions [this.questions.length + i] = value[i].id
+      }
+      this.section[this.section.length] = value.length
+      console.log(this.questions)
+      console.log(this.section)
+    },
+    goPrevious() {
+      this.step = 2
+      this.totalScore = 0
+      this.questionCount = 0
+      this.sectionCount = 0
+      this.ruleForm.paper = []
+    },
+    getCourseName(value) {
+      const item1 = this.courses.find((item) => {
+        return item.id === value
+      })
+      this.ruleForm.courseName = item1.course
+      console.log(item1.course)
+    },
     toogleExpand(row) {
       this.questionDetail = {}
-      let $table = this.$refs.table
       let that = this
-      this.$getRequest('/exam/question/info/' + row.id).then(res => {
-        if (res.data) {
-          that.questionDetail = res.data
-          console.log(res.data)
-        }
-      })
-      // this.allQuestions.map((item) => {
-      //   if (row.id != item.id) {
-      //     $table.toggleRowExpansion(item, false)
-      //   }
-      // })
-      $table.toggleRowExpansion(row)
+      this.$nextTick(() => {
+        let $table = this.$refs.table1[0]
+        console.log('sxa', $table)
+        that.$getRequest('/exam/question/info/' + row.id).then(res => {
+          if (res.data) {
+            that.questionDetail = res.data
+            console.log(res.data)
+          }
+        })
+        this.allQuestions.map((item) => {
+          if (row.id != item.id) {
+            $table.toggleRowExpansion(item, false)
+          }
+        })
+        $table.toggleRowExpansion(row)
+      });
     },
     getQuestion(value) {
       let that = this
@@ -471,14 +482,14 @@ export default {
           console.log(res.data)
         }
       })
-      // this.allQuestions.find(question => question.)
     },
     goNext() {
-      this.step = 2
-      console.log(this.ruleForm)
+      this.step = 4
+      this.totalScore = 0
+      console.log(this.totalScore)
     },
-    getCourse() {
-      console.log(this.ruleForm.institution)
+    getCourse(value) {
+      console.log("label", value)
       let that = this
       this.$getRequest('/user/course/list?facultyId=' + that.ruleForm.institution).then(res => {
         if (res.data) {
@@ -486,6 +497,10 @@ export default {
           that.ruleForm.course = ''
         }
       })
+      const item1 = this.institutions.find((item) => {
+        return item.id === value
+      })
+      this.ruleForm.institutionName = item1.facultyName
     },
     countQuestion() {
       this.questionCount = 0
@@ -586,5 +601,9 @@ export default {
 
 .el-col.el-col-2.line {
   text-align: center;
+}
+
+:deep(.el-table__expand-icon) {
+  display: none;
 }
 </style>
