@@ -155,7 +155,8 @@
           </div>
           <div style="display: flex;flex-direction: row">
             <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="goPrevious">上一步</el-button>
-            <el-button style="margin-left:3%;margin-top: 3%" size="medium" type="primary">开始组卷</el-button>
+            <el-button style="margin-left:3%;margin-top: 3%" size="medium" type="primary" @click="start">开始组卷
+            </el-button>
             <el-button type="primary" size="medium" style="margin-left:3%;margin-top: 3%" @click="addSection">
               <el-icon class="el-icon--right">
                 <plus/>
@@ -224,19 +225,20 @@
               </div>
               <div style="display: flex;flex-direction: row">
                 <div style="width: 100px">知识覆盖率</div>
-                <div class="num">{{ difficulty }}</div>
+                <div class="num">{{ cover }}</div>
               </div>
             </div>
             <div style="display: flex;flex-direction: row;justify-content: space-between;width: 90%;margin-bottom: 3%">
               <div style="display: flex;flex-direction: row">
                 <div style="width: 100px">总分数</div>
-                <div class="num">{{ sectionCount }}</div>
+                <div class="num">{{ totalScore }}</div>
               </div>
             </div>
           </div>
           <div style="display: flex;flex-direction: row">
             <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="step=2">上一步</el-button>
-            <el-button style="margin-left:3%;margin-top: 3%" size="medium" type="primary">开始组卷</el-button>
+            <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="start" type="primary">开始组卷
+            </el-button>
             <el-button type="primary" size="medium" style="margin-left:3%;margin-top: 3%" @click="addSection">
               <el-icon class="el-icon--right">
                 <plus/>
@@ -244,14 +246,15 @@
               新建小节
             </el-button>
           </div>
-          <div v-for="(section,index) in ruleForm.paper">
+          <div v-for="(section,index) in questions">
             <div
                 style="padding: 15px;border-radius: 8px;background-color: #fdfdfe;box-sizing: border-box;box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.35);margin-top: 4%">
               <div style="display: flex;flex-direction: row;justify-content: space-between">
                 <div style="margin-bottom: 2%">第{{ index + 1 }}节</div>
                 <el-form :inline="true" :model="ruleForm.paper[index]">
                   <el-form-item label="题型">
-                    <el-select v-model="ruleForm.paper[index].questionType" placeholder="请选择" @change="getQuestion">
+                    <el-select v-model="questionType[index]" placeholder="请选择"
+                               @change="((value)=>getQuestion(value,index))">
                       <el-option
                           v-for="item in questionTypes"
                           :key="item.value"
@@ -261,7 +264,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="每题分数">
-                    <el-input @change="countQuestion" v-model="ruleForm.paper[index].questionScore"></el-input>
+                    <el-input @change="countQuestion" v-model="sectionScore[index]"></el-input>
                   </el-form-item>
                 </el-form>
                 <el-icon @click="removeSection(index)">
@@ -269,10 +272,11 @@
                 </el-icon>
               </div>
               <el-table
+                  empty-text="请选择题型"
                   ref="table1"
-                  :data="allQuestions"
+                  :data="allQuestions[index]"
                   style="width: 98%"
-                  @selection-change="handleSelectionChange">
+                  @selection-change="((value)=>{handleSelectionChange(value, index)})">
                 <el-table-column type="expand">
                   <template #default="props">
                     <div style="display: flex;flex-direction: row">
@@ -281,7 +285,7 @@
                             style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
                           <div style="font-weight: bold">题目： &nbsp; {{ props.row.content }}</div>
                         </div>
-                        <div v-if="props.row.type ==1" style="display: flex;flex-direction: column">
+                        <div v-if="props.row.type ===1" style="display: flex;flex-direction: column">
                           <div>A. {{ questionDetail.a }}</div>
                           <div>B. {{ questionDetail.b }}</div>
                           <div>C. {{ questionDetail.c }}</div>
@@ -319,7 +323,7 @@
                     label="操作"
                     width="80">
                   <template #default="scope">
-                    <el-button type="text" @click="toogleExpand(scope.row)">详情</el-button>
+                    <el-button type="text" @click="toogleExpand(scope.row,index)">详情</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -364,6 +368,7 @@ export default {
         endTime: '',
         paper: []
       },
+      questionType: [],
       rules: {
         name: [
           {required: true, message: '请输入考试名称', trigger: 'blur'}
@@ -388,9 +393,10 @@ export default {
       questionCount: 0,
       difficulty: 0.0,
       totalScore: 0,
+      sectionScore: [0],
       institutions: [],
       courses: [],
-      questions: [],
+      questions: [[]],
       section: [],
       institution: '',
       questionDetail: {},
@@ -428,17 +434,29 @@ export default {
       }, {
         value: 3,
         label: '填空题'
-      }]
+      }],
+      points: [],
+      allPointsLength: 0,
+      cover: 0,
+      chapterPoints: []
     }
   },
   methods: {
-    handleSelectionChange(value) {
-      for (let i = 0; i < value.length; i++) {
-        this.questions [this.questions.length + i] = value[i].id
+    handleSelectionChange(values, index) {
+      let questions = []
+      this.chapterPoints[index] = []
+      this.cover = 0
+      for (let i = 0; i < values.length; i++) {
+        questions[i] = values[i].id
+        if (this.points.indexOf(values[i].outline) === -1)
+          this.points[this.points.length] = values[i].outline
+        this.chapterPoints[index][this.chapterPoints[index].length] = values[i].chapter + '.' + values[i].chapterPoint
       }
-      this.section[this.section.length] = value.length
+      this.questions[index] = questions
+      this.cover = (this.points.length / this.allPointsLength).toFixed(2) * 100
       console.log(this.questions)
-      console.log(this.section)
+      this.countQuestion()
+      console.log(this.chapterPoints)
     },
     goPrevious() {
       this.step = 2
@@ -452,13 +470,12 @@ export default {
         return item.id === value
       })
       this.ruleForm.courseName = item1.course
-      console.log(item1.course)
     },
-    toogleExpand(row) {
+    toogleExpand(row, index) {
       this.questionDetail = {}
       let that = this
       this.$nextTick(() => {
-        let $table = this.$refs.table1[0]
+        let $table = this.$refs.table1[index]
         console.log('sxa', $table)
         that.$getRequest('/exam/question/info/' + row.id).then(res => {
           if (res.data) {
@@ -466,27 +483,39 @@ export default {
             console.log(res.data)
           }
         })
-        this.allQuestions.map((item) => {
-          if (row.id != item.id) {
+        this.allQuestions[index].map((item) => {
+          if (row.id !== item.id) {
             $table.toggleRowExpansion(item, false)
           }
         })
         $table.toggleRowExpansion(row)
       });
     },
-    getQuestion(value) {
+    getQuestion(value, index) {
       let that = this
       this.$postRequest('/exam/question/list?type=' + value, {'courseId': that.ruleForm.course}).then(res => {
         if (res.data) {
-          that.allQuestions = res.data.data
+          that.allQuestions[index] = res.data.data
           console.log(res.data)
         }
       })
     },
     goNext() {
+      console.log(this.ruleForm.date)
+      console.log(this.ruleForm.endTime)
+      this.allPointsLength = 0
+      let that = this
       this.step = 4
       this.totalScore = 0
-      console.log(this.totalScore)
+      this.$getRequest('/exam/knowledgePoint/list', {'courseId': that.ruleForm.course}).then(res => {
+        console.log(res)
+        if (res.data) {
+          console.log(res.data)
+          res.data.forEach(each => {
+            that.allPointsLength += each.child.length
+          })
+        }
+      })
     },
     getCourse(value) {
       console.log("label", value)
@@ -506,11 +535,23 @@ export default {
       this.questionCount = 0
       this.totalScore = 0
       let that = this
-      this.ruleForm.paper.forEach(function (section) {
-        console.log(section.questionCount)
-        that.questionCount += parseInt(section.questionCount)
-        that.totalScore += parseInt(section.questionCount) * parseFloat(section.questionScore)
-      })
+      this.difficulty = 0.0
+      for (let i = 0; i < this.questions.length; i++) {
+        that.questionCount += this.questions[i].length
+        that.totalScore += this.questions[i].length * this.sectionScore[i]
+        if (i !== 0) {
+          that.section[i] = this.questions[i].length + that.section[i - 1]
+        } else {
+          that.section[i] = this.questions[i].length
+        }
+        for (let j = 0; j < this.questions[i].length; j++) {
+          let temp = this.allQuestions[i].find(item => item.id === this.questions[i][j]).difficulty
+          this.difficulty += temp
+        }
+      }
+      this.difficulty = this.difficulty / this.questionCount
+      this.difficulty = this.difficulty.toFixed(1)
+      console.log(this.difficulty)
     },
     handleChange(value) {
       console.log(value);
@@ -526,33 +567,73 @@ export default {
     },
     removeSection(index) {
       this.ruleForm.paper.splice(index, 1)
+      this.questions.splice(index, 1)
       this.countQuestion()
     },
     addSection() {
-      if (this.step == 3) {
-        this.ruleForm.paper.push({
-          questionCount: 0,
-          questionType: '',
-          questionScore: '0',
-          difficulty: 0,
-          points: [],
+      this.questions[this.questions.length] = []
+      for (let i = 0; i < this.questions.length; i++) {
+        if (this.step === 3) {
+          this.ruleForm.paper.push({
+            questionCount: 0,
+            questionType: '',
+            questionScore: '0',
+            difficulty: 0,
+            points: [],
+          })
+        }
+
+        if (this.step === 4) {
+          this.sectionScore[this.questions.length] = 0
+          this.ruleForm.paper.push({
+            questionCount: 0,
+            questionScore: '0',
+            questionType: '',
+            questionIds: [],
+          })
+        }
+
+        this.$nextTick(() => {
+          this.allQuestions.forEach(row => {
+            if (this.questions[i].indexOf(row.id) >= 0) {
+              this.$refs.table1[i].toggleRowSelection(row, true);
+            }
+          })
         })
       }
-      if (this.step == 4) {
-        let that = this
-        this.$postRequest('/exam/question/list?type=1', {'courseId': that.ruleForm.course}).then(res => {
-          if (res.data) {
-            that.allQuestions = res.data.data
-            console.log(res.data)
-          }
-        })
-        this.ruleForm.paper.push({
-          questionCount: 0,
-          questionScore: '0',
-          questionType: 1,
-          questionIds: [],
-        })
-      }
+    },
+    start() {
+      let that = this
+      let finalQuestions = ''
+      let finalPoints = ''
+      this.questions.forEach(each => {
+        finalQuestions += each + ','
+      })
+      this.chapterPoints.forEach(each => {
+        finalPoints += each + ','
+      })
+      console.log('finalQuestions', finalQuestions)
+      console.log('finalPoints', finalPoints)
+      console.log(this.sectionScore)
+      console.log(this.section)
+      console.log(this.points)
+
+      this.$postRequest('/exam/examinationPaper/add', {
+        content: this.ruleForm.name,
+        course_id: this.ruleForm.course,
+        difficulty: that.difficulty,
+        endTime: '' + this.ruleForm.date + ' ' + this.ruleForm.startTime,
+        examTime: '' + this.ruleForm.date + ' ' + this.ruleForm.endTime,
+        points: finalPoints,
+        questions: finalQuestions,
+        score: this.totalScore+'',
+        section: this.section+'',
+        sectionScore: this.sectionScore+'',
+        status: 3,
+        creator: 1
+      }).then(res => {
+        console.log(res)
+      })
     }
   }
 }

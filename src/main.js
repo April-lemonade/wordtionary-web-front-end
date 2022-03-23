@@ -1,5 +1,4 @@
 import {createApp} from 'vue'
-import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
@@ -13,13 +12,6 @@ import {putRequest} from './utils/api';
 import {deleteRequest} from './utils/api';
 import {getRequest} from './utils/api';
 
-/*Vue.$prototype.postRequest = postRequest;
-Vue.prototype.postRequest = postRequest;
-Vue.prototype.postKeyValueRequest = postKeyValueRequest;
-Vue.prototype.putRequest = putRequest;
-Vue.prototype.deleteRequest = deleteRequest;
-Vue.prototype.getRequest = getRequest;*/
-// Vue.prototype.postRequest = postRequest()
 let app = createApp(App);
 app.config.globalProperties.$axios = axios
 app.config.globalProperties.$echarts = echarts;

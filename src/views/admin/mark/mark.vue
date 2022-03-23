@@ -30,7 +30,7 @@
     </div>
     <div v-if="checked[0]" style="width: 77%">
       <div v-if="exams.length!==0" v-for="(exam,index) in exams" :key="exam.id" @click="show_detail(index)"
-           style="border-style: solid;border-width: 1px;border-color: #D7D7D7;margin: 3%;width: 80%;border-radius: 10px;display: flex;flex-direction: column;padding: 2%;">
+           style="border-style: solid;border-width: 1px;border-color: #D7D7D7;margin: 3%;width: 80%;border-radius: 10px;display: flex;flex-direction: column;padding: 2%;cursor: pointer">
         <div style="display: flex;flex-direction: row;justify-content: space-between;width: 100%;margin-bottom: 5%">
           <div>{{ exam.content }}</div>
           <el-tag v-if="exam.status === 3" class="mx-1" type="" effect="dark" style="justify-self: flex-end">
@@ -165,28 +165,7 @@ export default {
           ],
         }
       ],
-      exams: [{
-        id: 0,
-        name: '2021-2022第2学期线性代数期末考试',
-        course: '线性代数',
-        institution: '统计与数学学院',
-        time: '2022/1/1 13:40 - 15:40',
-        status: '批阅中'
-      }, {
-        id: 1,
-        name: '2021-2022第2学期微积分期末考试',
-        course: '微积分',
-        institution: '统计与数学学院',
-        time: '2022/1/1 13:40 - 15:40',
-        status: '批阅中'
-      }, {
-        id: 2,
-        name: '2021-2022第2学期数学分析期末考试',
-        course: '数学分析',
-        institution: '统计与数学学院',
-        time: '2022/1/1 13:40 - 15:40',
-        status: '已结束'
-      }],
+      exams: [],
       defaultProps: {
         children: "children",
         label: "label",
