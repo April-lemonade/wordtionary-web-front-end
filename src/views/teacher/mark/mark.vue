@@ -166,11 +166,12 @@ export default {
     },
     handleCheckChange(data, checked, indeterminate) {
       let {id} = data
+      console.log(checked)
       let index = this.checked.indexOf(id)
       // 当前节点不在this.checked中,且当前节点为选中状态
       if (index < 0 && this.checked.length && checked) {
         this.$message.warning('只能同时选中一门课程')
-        console.log(data)
+        // console.log(data)
         this.$refs.tree.setChecked(data, false) // 取消当前节点的选中状态
         return
       }
@@ -184,17 +185,10 @@ export default {
         this.checked.push(id)
       }
     },
-    handleNodeClick(data, checked, node) {
-      console.log(data);
-      if (checked) {
-        this.$refs.tree.setCheckedNodes([data]);
-      }
-    },
     filterNode(value, data) {
       if (!value) return true;
       return data.label.indexOf(value) !== -1;
     },
-
   },
 };
 </script>

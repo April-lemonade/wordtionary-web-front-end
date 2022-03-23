@@ -4,11 +4,11 @@
         style="border-right-style: solid;border-right-width: 1px;height:calc(100vh);padding-left: 5%;padding-right: 5%;border-right-color: #D7D7D7;width: 20%;display: flex;flex-direction: column">
       <div style="margin-top: 10%;font-size: 20px;font-weight: bold">步骤：</div>
       <div style="display: flex;flex-direction: row;margin-top: 5%">
-        <div :class="step==1?'active':'inactive'">1</div>
+        <div :class="step===1?'active':'inactive'">1</div>
         <div style="padding: 10px">填写基本信息</div>
       </div>
       <div style="display: flex;flex-direction: row;margin-top: 5%">
-        <div :class="step!=1?'active':'inactive'">2</div>
+        <div :class="step!==1?'active':'inactive'">2</div>
         <div style="padding: 10px">组卷</div>
       </div>
     </div>
@@ -16,7 +16,7 @@
         style="width: 77%;display: flex;justify-content: center;flex-direction: column;align-items: center;height: calc(100vh)">
       <el-scrollbar style="width: 100%;">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" label-position="top"
-                 v-if="step==1" style="width: 90%;margin-left: 5%;margin-top: 5%">
+                 v-if="step===1" style="width: 90%;margin-left: 5%;margin-top: 5%">
           <el-row style="margin-bottom: 3%">
             <el-col :span="10">
               <el-form-item label="考试名称" prop="name">
@@ -27,7 +27,8 @@
           <el-row style="margin-bottom: 3%">
             <el-col :span="14">
               <el-form-item label="学院" prop="institution">
-                <el-select size="medium" v-model="ruleForm.institution" placeholder="请选择学院" @change="getCourse">
+                <el-select size="medium" v-model="ruleForm.institution" placeholder="请选择学院" @change="getCourse"
+                           value-key="facultyName">
                   <el-option v-for="institution in institutions" :value="institution.id" :key="institution.id"
                              :label="institution.facultyName"></el-option>
                 </el-select>
@@ -35,7 +36,7 @@
             </el-col>
             <el-col :span="8">
               <el-form-item label="课程" prop="course">
-                <el-select size="medium" v-model="ruleForm.course" placeholder="请选择课程">
+                <el-select size="medium" v-model="ruleForm.course" placeholder="请选择课程" @change="getCourseName">
                   <el-option v-for="course in courses" :value="course.id" :key="course.id"
                              :label="course.course"></el-option>
                 </el-select>
@@ -71,11 +72,11 @@
           </el-row>
           <el-row style="margin-bottom: 3%;display: flex;flex-direction: row;justify-content: flex-end">
             <el-button style="margin-left:3%;margin-top: 3%" size="medium">取消</el-button>
-            <el-button type="primary" style="margin-left:3%;margin-top: 3%" size="medium" @click="goNext">下一步
+            <el-button type="primary" style="margin-left:3%;margin-top: 3%" size="medium" @click="step = 2">下一步
             </el-button>
           </el-row>
         </el-form>
-        <div v-if="step==2" style="width: 90%;margin-left: 5%">
+        <div v-if="step===2" style="width: 90%;margin-left: 5%">
           <div
               style="width: 100%;background-color: #F7F7F7;display:flex;justify-content:center;padding: 1%;border-radius: 10px">
             <div style="width: 100%;background-color: #D7D7D7;border-radius: 10px;padding: 1%">
@@ -86,21 +87,17 @@
                     <div style="display: flex;flex-direction: row;width: 100%;margin-bottom: 2%">
                       <div style="width: 50%;display: flex;flex-direction: row">
                         <div style="font-weight: bold;margin-right: 5%">学院</div>
-                        <div>{{ ruleForm.institution }}</div>
+                        <div>{{ ruleForm.institutionName }}</div>
                       </div>
                       <div style="width: 50%;display: flex;flex-direction: row">
-                        <div style="font-weight: bold;margin-right: 5%">考试开始时间</div>
-                        <div>{{ ruleForm.date1 }} {{ ruleForm.date2 }}</div>
+                        <div style="font-weight: bold;margin-right: 5%">考试时间</div>
+                        <div>{{ ruleForm.startTime }} {{ ruleForm.endTime }}</div>
                       </div>
                     </div>
                     <div style="display: flex;flex-direction: row;width: 100%;margin-bottom: 3%">
                       <div style="width: 50%;display: flex;flex-direction: row">
                         <div style="font-weight: bold;margin-right: 5%">课程</div>
-                        <div>{{ ruleForm.course }}</div>
-                      </div>
-                      <div style="width: 50%;display: flex;flex-direction: row">
-                        <div style="font-weight: bold;margin-right: 5%;width: 100px">考试时长</div>
-                        <div>{{ ruleForm.duration }}</div>
+                        <div>{{ ruleForm.courseName }}</div>
                       </div>
                     </div>
                   </div>
@@ -118,7 +115,7 @@
             </div>
             <div
                 style="width: 100px;height:100px;border-radius: 10px;display:flex;flex-direction: column;align-items: center;justify-content: center;border-style: solid;border-width: 1px;border-color: #D7D7D7"
-                @click="step = 4">
+                @click="goNext">
               <img style="width: 40px;height: 45px" src="../../../assets/byhand.png"/>
               <div>手动组卷</div>
             </div>
@@ -157,8 +154,9 @@
             </div>
           </div>
           <div style="display: flex;flex-direction: row">
-            <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="step=2">上一步</el-button>
-            <el-button style="margin-left:3%;margin-top: 3%" size="medium" type="primary">开始组卷</el-button>
+            <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="goPrevious">上一步</el-button>
+            <el-button style="margin-left:3%;margin-top: 3%" size="medium" type="primary" @click="start">开始组卷
+            </el-button>
             <el-button type="primary" size="medium" style="margin-left:3%;margin-top: 3%" @click="addSection">
               <el-icon class="el-icon--right">
                 <plus/>
@@ -206,7 +204,7 @@
             </div>
           </div>
         </div>
-        <div v-if="step == 4" style="width: 90%;display: flex;flex-direction: column;margin: 5%">
+        <div v-if="step === 4" style="width: 90%;display: flex;flex-direction: column;margin: 5%">
           <div
               style="padding: 15px;border-radius: 8px;background-color: #fdfdfe;box-sizing: border-box;box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.35);">
             <div style="font-size: 20px;font-weight: bold;margin-bottom: 5%">试卷统计信息</div>
@@ -227,23 +225,20 @@
               </div>
               <div style="display: flex;flex-direction: row">
                 <div style="width: 100px">知识覆盖率</div>
-                <div class="num">{{ difficulty }}</div>
+                <div class="num">{{ cover }}</div>
               </div>
             </div>
             <div style="display: flex;flex-direction: row;justify-content: space-between;width: 90%;margin-bottom: 3%">
               <div style="display: flex;flex-direction: row">
                 <div style="width: 100px">总分数</div>
-                <div class="num">{{ sectionCount }}</div>
+                <div class="num">{{ totalScore }}</div>
               </div>
-              <!--            <div style="display: flex;flex-direction: row">
-                            <div style="width: 100px">知识覆盖率</div>
-                            <div>{{ difficulty }}</div>
-                          </div>-->
             </div>
           </div>
           <div style="display: flex;flex-direction: row">
             <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="step=2">上一步</el-button>
-            <el-button style="margin-left:3%;margin-top: 3%" size="medium" type="primary">开始组卷</el-button>
+            <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="start" type="primary">开始组卷
+            </el-button>
             <el-button type="primary" size="medium" style="margin-left:3%;margin-top: 3%" @click="addSection">
               <el-icon class="el-icon--right">
                 <plus/>
@@ -251,14 +246,15 @@
               新建小节
             </el-button>
           </div>
-          <div v-for="(section,index) in ruleForm.paper">
+          <div v-for="(section,index) in questions">
             <div
                 style="padding: 15px;border-radius: 8px;background-color: #fdfdfe;box-sizing: border-box;box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.35);margin-top: 4%">
               <div style="display: flex;flex-direction: row;justify-content: space-between">
                 <div style="margin-bottom: 2%">第{{ index + 1 }}节</div>
                 <el-form :inline="true" :model="ruleForm.paper[index]">
                   <el-form-item label="题型">
-                    <el-select v-model="ruleForm.paper[index].questionType" placeholder="请选择" @change="getQuestion">
+                    <el-select v-model="questionType[index]" placeholder="请选择"
+                               @change="((value)=>getQuestion(value,index))">
                       <el-option
                           v-for="item in questionTypes"
                           :key="item.value"
@@ -268,7 +264,7 @@
                     </el-select>
                   </el-form-item>
                   <el-form-item label="每题分数">
-                    <el-input @change="countQuestion" v-model="ruleForm.paper[index].questionScore"></el-input>
+                    <el-input @change="countQuestion" v-model="sectionScore[index]"></el-input>
                   </el-form-item>
                 </el-form>
                 <el-icon @click="removeSection(index)">
@@ -276,34 +272,28 @@
                 </el-icon>
               </div>
               <el-table
-                  ref="table"
-                  :data="allQuestions"
-                  tooltip-effect="dark"
-                  style="width: 100%"
-                  @selection-change="handleSelectionChange">
+                  empty-text="请选择题型"
+                  ref="table1"
+                  :data="allQuestions[index]"
+                  style="width: 98%"
+                  @selection-change="((value)=>{handleSelectionChange(value, index)})">
                 <el-table-column type="expand">
                   <template #default="props">
                     <div style="display: flex;flex-direction: row">
-                      <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
+                      <div style="width: 98%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
                         <div
                             style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
                           <div style="font-weight: bold">题目： &nbsp; {{ props.row.content }}</div>
-                          <!--                          <div style="border-style: solid;border-width: 2px;border-radius: 5px;font-weight: bold">
-                                                      {{ props.row.type }}
-                                                    </div>-->
-                          <!--                          <div style="font-weight: bold">分值: {{ props.row.score }}</div>-->
                         </div>
-                        <div v-if="props.row.type ==1">
-                          A. {{ questionDetail.a }}
-                          B. {{ questionDetail.b }}
-                          C. {{ questionDetail.c }}
-                          D. {{ questionDetail.d }}
+                        <div v-if="props.row.type ===1" style="display: flex;flex-direction: column">
+                          <div>A. {{ questionDetail.a }}</div>
+                          <div>B. {{ questionDetail.b }}</div>
+                          <div>C. {{ questionDetail.c }}</div>
+                          <div>D. {{ questionDetail.d }}</div>
                         </div>
                         <div style="font-weight: bold">正确答案: {{ questionDetail.answer }}</div>
                         <div>
-                          作者：{{ props.row.name }} | 上传时间：{{ props.row.createTime }}
-                        </div>
-                        <div>难度系数：{{ props.row.difficulty }} |
+                          作者：{{ props.row.name }} | 上传时间：{{ props.row.createTime }} | 难度系数：{{ props.row.difficulty }} |
                           知识点：{{ props.row.outline }} | 使用次数：{{ props.row.usageTimes }}
                         </div>
                       </div>
@@ -312,7 +302,7 @@
                 </el-table-column>
                 <el-table-column
                     type="selection"
-                    width="55">
+                    width="30">
                 </el-table-column>
                 <el-table-column
                     prop="content"
@@ -331,9 +321,9 @@
                 </el-table-column>
                 <el-table-column
                     label="操作"
-                    width="130">
+                    width="80">
                   <template #default="scope">
-                    <el-button type="text" @click="toogleExpand(scope.row)">查看详情</el-button>
+                    <el-button type="text" @click="toogleExpand(scope.row,index)">详情</el-button>
                   </template>
                 </el-table-column>
               </el-table>
@@ -370,12 +360,15 @@ export default {
       ruleForm: {
         name: '',
         institution: '',
+        institutionName: '',
         course: '',
+        courseName: '',
         date: '',
         startTime: '',
         endTime: '',
         paper: []
       },
+      questionType: [],
       rules: {
         name: [
           {required: true, message: '请输入考试名称', trigger: 'blur'}
@@ -395,17 +388,16 @@ export default {
         endTime: [
           {required: true, message: '请选择时间', trigger: 'change'}
         ],
-        /*duration: [
-          {required: true, message: '请输入考试用时', trigger: 'blur'},
-          {type: 'number', message: '考试时长必须为数字值'}
-        ],*/
       },
       sectionCount: 2,
       questionCount: 0,
       difficulty: 0.0,
       totalScore: 0,
+      sectionScore: [0],
       institutions: [],
       courses: [],
+      questions: [[]],
+      section: [],
       institution: '',
       questionDetail: {},
       props: {multiple: true},
@@ -442,43 +434,91 @@ export default {
       }, {
         value: 3,
         label: '填空题'
-      }]
+      }],
+      points: [],
+      allPointsLength: 0,
+      cover: 0,
+      chapterPoints: []
     }
   },
   methods: {
-    toogleExpand(row) {
-      this.questionDetail = {}
-      let $table = this.$refs.table
-      let that = this
-      this.$getRequest('/exam/question/info/' + row.id).then(res => {
-        if (res.data) {
-          that.questionDetail = res.data
-          console.log(res.data)
-        }
-      })
-      // this.allQuestions.map((item) => {
-      //   if (row.id != item.id) {
-      //     $table.toggleRowExpansion(item, false)
-      //   }
-      // })
-      $table.toggleRowExpansion(row)
+    handleSelectionChange(values, index) {
+      let questions = []
+      this.chapterPoints[index] = []
+      this.cover = 0
+      for (let i = 0; i < values.length; i++) {
+        questions[i] = values[i].id
+        if (this.points.indexOf(values[i].outline) === -1)
+          this.points[this.points.length] = values[i].outline
+        this.chapterPoints[index][this.chapterPoints[index].length] = values[i].chapter + '.' + values[i].chapterPoint
+      }
+      this.questions[index] = questions
+      this.cover = (this.points.length / this.allPointsLength).toFixed(2) * 100
+      console.log(this.questions)
+      this.countQuestion()
+      console.log(this.chapterPoints)
     },
-    getQuestion(value) {
+    goPrevious() {
+      this.step = 2
+      this.totalScore = 0
+      this.questionCount = 0
+      this.sectionCount = 0
+      this.ruleForm.paper = []
+    },
+    getCourseName(value) {
+      const item1 = this.courses.find((item) => {
+        return item.id === value
+      })
+      this.ruleForm.courseName = item1.course
+    },
+    toogleExpand(row, index) {
+      this.questionDetail = {}
+      let that = this
+      this.$nextTick(() => {
+        let $table = this.$refs.table1[index]
+        console.log('sxa', $table)
+        that.$getRequest('/exam/question/info/' + row.id).then(res => {
+          if (res.data) {
+            that.questionDetail = res.data
+            console.log(res.data)
+          }
+        })
+        this.allQuestions[index].map((item) => {
+          if (row.id !== item.id) {
+            $table.toggleRowExpansion(item, false)
+          }
+        })
+        $table.toggleRowExpansion(row)
+      });
+    },
+    getQuestion(value, index) {
       let that = this
       this.$postRequest('/exam/question/list?type=' + value, {'courseId': that.ruleForm.course}).then(res => {
         if (res.data) {
-          that.allQuestions = res.data.data
+          that.allQuestions[index] = res.data.data
           console.log(res.data)
         }
       })
-      // this.allQuestions.find(question => question.)
     },
     goNext() {
-      this.step = 2
-      console.log(this.ruleForm)
+      console.log(this.ruleForm.date)
+      console.log(this.ruleForm.endTime)
+      this.allPointsLength = 0
+      let that = this
+      this.step = 4
+      this.totalScore = 0
+      this.$getRequest('/exam/knowledgePoint/list', {'courseId': that.ruleForm.course}).then(res => {
+        console.log(res)
+        if (res.data) {
+          console.log(res.data)
+          res.data.forEach(each => {
+            that.allPointsLength += each.child.length
+          })
+        }
+      })
     },
-    getCourse() {
-      console.log(this.ruleForm.institution)
+    getCourse(value) {
+      console.log("label", value)
       let that = this
       this.$getRequest('/user/course/list?facultyId=' + that.ruleForm.institution).then(res => {
         if (res.data) {
@@ -486,16 +526,32 @@ export default {
           that.ruleForm.course = ''
         }
       })
+      const item1 = this.institutions.find((item) => {
+        return item.id === value
+      })
+      this.ruleForm.institutionName = item1.facultyName
     },
     countQuestion() {
       this.questionCount = 0
       this.totalScore = 0
       let that = this
-      this.ruleForm.paper.forEach(function (section) {
-        console.log(section.questionCount)
-        that.questionCount += parseInt(section.questionCount)
-        that.totalScore += parseInt(section.questionCount) * parseFloat(section.questionScore)
-      })
+      this.difficulty = 0.0
+      for (let i = 0; i < this.questions.length; i++) {
+        that.questionCount += this.questions[i].length
+        that.totalScore += this.questions[i].length * this.sectionScore[i]
+        if (i !== 0) {
+          that.section[i] = this.questions[i].length + that.section[i - 1]
+        } else {
+          that.section[i] = this.questions[i].length
+        }
+        for (let j = 0; j < this.questions[i].length; j++) {
+          let temp = this.allQuestions[i].find(item => item.id === this.questions[i][j]).difficulty
+          this.difficulty += temp
+        }
+      }
+      this.difficulty = this.difficulty / this.questionCount
+      this.difficulty = this.difficulty.toFixed(1)
+      console.log(this.difficulty)
     },
     handleChange(value) {
       console.log(value);
@@ -511,33 +567,73 @@ export default {
     },
     removeSection(index) {
       this.ruleForm.paper.splice(index, 1)
+      this.questions.splice(index, 1)
       this.countQuestion()
     },
     addSection() {
-      if (this.step == 3) {
-        this.ruleForm.paper.push({
-          questionCount: 0,
-          questionType: '',
-          questionScore: '0',
-          difficulty: 0,
-          points: [],
+      this.questions[this.questions.length] = []
+      for (let i = 0; i < this.questions.length; i++) {
+        if (this.step === 3) {
+          this.ruleForm.paper.push({
+            questionCount: 0,
+            questionType: '',
+            questionScore: '0',
+            difficulty: 0,
+            points: [],
+          })
+        }
+
+        if (this.step === 4) {
+          this.sectionScore[this.questions.length] = 0
+          this.ruleForm.paper.push({
+            questionCount: 0,
+            questionScore: '0',
+            questionType: '',
+            questionIds: [],
+          })
+        }
+
+        this.$nextTick(() => {
+          this.allQuestions.forEach(row => {
+            if (this.questions[i].indexOf(row.id) >= 0) {
+              this.$refs.table1[i].toggleRowSelection(row, true);
+            }
+          })
         })
       }
-      if (this.step == 4) {
-        let that = this
-        this.$postRequest('/exam/question/list?type=1', {'courseId': that.ruleForm.course}).then(res => {
-          if (res.data) {
-            that.allQuestions = res.data.data
-            console.log(res.data)
-          }
-        })
-        this.ruleForm.paper.push({
-          questionCount: 0,
-          questionScore: '0',
-          questionType: 1,
-          questionIds: [],
-        })
-      }
+    },
+    start() {
+      let that = this
+      let finalQuestions = ''
+      let finalPoints = ''
+      this.questions.forEach(each => {
+        finalQuestions += each + ','
+      })
+      this.chapterPoints.forEach(each => {
+        finalPoints += each + ','
+      })
+      console.log('finalQuestions', finalQuestions)
+      console.log('finalPoints', finalPoints)
+      console.log(this.sectionScore)
+      console.log(this.section)
+      console.log(this.points)
+
+      this.$postRequest('/exam/examinationPaper/add', {
+        content: this.ruleForm.name,
+        course_id: this.ruleForm.course,
+        difficulty: that.difficulty,
+        endTime: '' + this.ruleForm.date + ' ' + this.ruleForm.startTime,
+        examTime: '' + this.ruleForm.date + ' ' + this.ruleForm.endTime,
+        points: finalPoints,
+        questions: finalQuestions,
+        score: this.totalScore+'',
+        section: this.section+'',
+        sectionScore: this.sectionScore+'',
+        status: 3,
+        creator: 1
+      }).then(res => {
+        console.log(res)
+      })
     }
   }
 }
@@ -586,5 +682,9 @@ export default {
 
 .el-col.el-col-2.line {
   text-align: center;
+}
+
+:deep(.el-table__expand-icon) {
+  display: none;
 }
 </style>
