@@ -21,14 +21,14 @@
         </div>
       </div>
     </div>
-    <div v-if="!checked[0]"
-         style="display: flex;flex-direction: row;align-items:center;justify-content: center;width: 77%;height:calc(100vh - 70px);">
-      <el-icon :size="20">
-        <d-arrow-left/>
-      </el-icon>
-      请选择左侧的课程，查看批阅情况
-    </div>
-    <div v-if="checked[0]" style="width: 77%">
+    <!--    <div v-if="!checked[0]"
+             style="display: flex;flex-direction: row;align-items:center;justify-content: center;width: 77%;height:calc(100vh - 70px);">
+          <el-icon :size="20">
+            <d-arrow-left/>
+          </el-icon>
+          请选择左侧的课程，查看批阅情况
+        </div>-->
+    <div style="width: 77%">
       <div v-if="exams.length!==0" v-for="(exam,index) in exams" :key="exam.id" @click="show_detail(index)"
            style="border-style: solid;border-width: 1px;border-color: #D7D7D7;margin: 3%;width: 80%;border-radius: 10px;display: flex;flex-direction: column;padding: 2%;cursor: pointer">
         <div style="display: flex;flex-direction: row;justify-content: space-between;width: 100%;margin-bottom: 5%">
@@ -93,6 +93,16 @@ export default {
             }
           })
         }
+      }
+    })
+    this.$postRequest('/exam/examinationPaper/list').then(res => {
+      if (res.data) {
+        let exams = []
+        res.data.data.forEach(each => {
+          if (each.status === 5)
+            exams[exams.length] = each
+        })
+        that.exams = exams
       }
     })
   },
@@ -192,6 +202,16 @@ export default {
       // 当前节点在this.checked中,当前节点为未选中状态(主动去掉当前选中状态)
       if (!checked && index >= 0 && this.checked.length) {
         this.checked = []
+        this.$postRequest('/exam/examinationPaper/list').then(res => {
+          if (res.data) {
+            let exams = []
+            res.data.data.forEach(each => {
+              if (each.status === 5)
+                exams[exams.length] = each
+            })
+            that.exams = exams
+          }
+        })
         return
       }
       // 当前节点不在this.checked(长度为0)中,当前节点为选中状态,this.checked中存储当前节点id
@@ -199,9 +219,14 @@ export default {
         console.log(data)
         this.checked.push(id)
         this.$postRequest('/exam/examinationPaper/list?courseId=' + data.courseId + "&facultyId=" + data.institutionId).then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.data) {
-            that.exams = res.data.data
+            let exams = []
+            res.data.data.forEach(each => {
+              if (each.status === 5)
+                exams[exams.length] = each
+            })
+            that.exams = exams
           }
         })
       }
