@@ -39,6 +39,12 @@ const routes = [
 
       },
       {
+        path: 'questions',
+        name: 'student_questions',
+        component: () => import('../views/student/questions.vue')
+
+      },
+      {
         path: 'grade',
         name: 'student_grade',
         component: () => import('../views/student/grade.vue')
@@ -145,6 +151,10 @@ const routes = [
         path: 'mark/mark_example',
         component: () => import('../views/teacher/mark/mark_example'),
         name: 'teacher_mark_example'
+      }, {
+        path: 'examination',
+        component: () => import('../views/teacher/examination.vue'),
+        name:'teacher_examination'
       }
 
     ]

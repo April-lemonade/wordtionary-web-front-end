@@ -20,29 +20,41 @@
         </div>
       </div>
     </div>
-    <div v-if="!checked[0]"
+<!--    <div v-if="!checked[0]"
          style="display: flex;flex-direction: row;align-items:center;justify-content: center;width: 77%;height:calc(100vh - 70px);">
       <el-icon :size="20">
         <d-arrow-left/>
       </el-icon>
-      请选择左侧的课程，查看批阅情况
-    </div>
-    <div v-if="checked[0]" style="width: 77%">
+      请选择左侧的课程，查看考试
+    </div>-->
+    <div style="width: 77%">
       <el-button type="primary" @click="goNew" style="margin-left:3%;margin-top: 3%">发布考试</el-button>
       <div v-for="(exam,index) in exams" :key="exam.id" @click="show_detail(index)"
            style="border-style: solid;border-width: 1px;border-color: #D7D7D7;margin: 3%;width: 80%;border-radius: 10px;display: flex;flex-direction: column;padding: 2%;">
         <div style="display: flex;flex-direction: row;justify-content: space-between;width: 100%;margin-bottom: 5%">
-          <div>{{ exam.name }}</div>
-          <el-tag class="mx-1" type="success" effect="dark" style="justify-self: flex-end">
-            {{ exam.status }}
+          <div>{{ exam.content }}</div>
+          <el-tag v-if="exam.status === 3" class="mx-1" type="" effect="dark" style="justify-self: flex-end">
+            待开始
           </el-tag>
+          <el-tag v-if="exam.status === 4" class="mx-1" type="success" effect="dark" style="justify-self: flex-end">
+            进行中
+          </el-tag>
+          <el-tag v-if="exam.status === 5" class="mx-1" type="warning" effect="dark" style="justify-self: flex-end">
+            批阅中
+          </el-tag>
+          <el-tag v-if="exam.status === 6" class="mx-1" type="info" effect="dark" style="justify-self: flex-end">
+            已结束
+          </el-tag>
+          <!--          <el-tag class="mx-1" type="success" effect="dark" style="justify-self: flex-end">
+                      {{ exam.status }}
+                    </el-tag>-->
         </div>
-        <div style="display: flex;flex-direction: row;justify-content: space-between;width: 60%">
+        <div style="display: flex;flex-direction: row;justify-content: space-between;width: 100%">
           <div>{{ exam.course }}</div>
           <div>|</div>
-          <div>{{ exam.institution }}</div>
+          <div>{{ exam.facultyName }}</div>
           <div>|</div>
-          <div>{{ exam.time }}</div>
+          <div>{{ exam.examTime }} - {{exam.endTime}}</div>
         </div>
       </div>
     </div>
@@ -66,98 +78,47 @@ export default {
     return {
       filterText: '',
       checked: [],
-      data: [
-        {
-          id: 2,
-          label: "工商管理学院",
-          disabled: true,
-          children: [
-            {
-              id: 4,
-              label: "人力资源管理",
-            }, {
-              id: 5,
-              label: "企业经济学",
-            }, {
-              id: 6,
-              label: "科学方法论",
-            }, {
-              id: 7,
-              label: "市场营销学",
-            }, {
-              id: 8,
-              label: "广告学",
-            }, {
-              id: 9,
-              label: "消费者行为学",
-            }, {
-              id: 10,
-              label: "商业心理学",
-            }, {
-              id: 11,
-              label: "国际商务概论",
-            },
-          ],
-        }, {
-          id: 3,
-          label: "旅游与城乡管理学院",
-          disabled: true,
-          children: [
-            {
-              id: 12,
-              label: "休闲学",
-            }, {
-              id: 13,
-              label: "旅游企业管理",
-            }, {
-              id: 14,
-              label: "旅游研究方法",
-            }, {
-              id: 15,
-              label: "城市遥感信息",
-            }, {
-              id: 16,
-              label: "城市生态学",
-            }, {
-              id: 17,
-              label: "旅游规划",
-            }, {
-              id: 18,
-              label: "旅游企业会计",
-            }, {
-              id: 19,
-              label: "酒店管理概论",
-            },
-          ],
-        }
-      ],
-      exams: [{
-        id: 0,
-        name: '2021-2022第2学期线性代数期末考试',
-        course: '线性代数',
-        institution: '统计与数学学院',
-        time: '2022/1/1 13:40 - 15:40',
-        status: '批阅中'
-      }, {
-        id: 1,
-        name: '2021-2022第2学期微积分期末考试',
-        course: '微积分',
-        institution: '统计与数学学院',
-        time: '2022/1/1 13:40 - 15:40',
-        status: '批阅中'
-      }, {
-        id: 2,
-        name: '2021-2022第2学期数学分析期末考试',
-        course: '数学分析',
-        institution: '统计与数学学院',
-        time: '2022/1/1 13:40 - 15:40',
-        status: '已结束'
-      }],
+      data: [],
+      exams: [],
       defaultProps: {
         children: "children",
         label: "label",
       },
     };
+  },
+  mounted() {
+    this.data = []
+    let that = this
+    this.$getRequest('/user/faculty/list').then(res => {
+      if (res.data) {
+        for (let i = 0; i < res.data.length; i++) {
+          let id1 = res.data[i].id
+          that.data.push({
+            id: res.data[i].id,
+            label: res.data[i].facultyName,
+            disabled: true,
+            children: []
+          })
+          that.$getRequest('/user/course/list?facultyId=' + res.data[i].id).then(res => {
+            for (let j = 0; j < res.data.data.length; j++) {
+              let id = res.data.data[j].id + i
+              that.data[i].children.push({
+                id: id,
+                courseId: res.data.data[j].id,
+                institutionId: id1,
+                label: res.data.data[j].course
+              })
+            }
+          })
+        }
+      }
+    })
+    this.$postRequest('/exam/examinationPaper/list').then(res => {
+      if (res.data) {
+        that.exams = res.data.data
+        console.log(that.exams)
+      }
+    })
   },
   methods: {
     goNew() {
@@ -169,6 +130,7 @@ export default {
       this.$router.push({path: '/admin/mark/mark_console', query: {obj: obj}})
     },
     handleCheckChange(data, checked, indeterminate) {
+      let that = this
       let {id} = data
       let index = this.checked.indexOf(id)
       // 当前节点不在this.checked中,且当前节点为选中状态
@@ -181,11 +143,22 @@ export default {
       // 当前节点在this.checked中,当前节点为未选中状态(主动去掉当前选中状态)
       if (!checked && index >= 0 && this.checked.length) {
         this.checked = []
+        this.$postRequest('/exam/examinationPaper/list').then(res => {
+          if (res.data) {
+            that.exams = res.data.data
+          }
+        })
         return
       }
       // 当前节点不在this.checked(长度为0)中,当前节点为选中状态,this.checked中存储当前节点id
       if (index < 0 && !this.checked.length && checked) {
         this.checked.push(id)
+        this.$postRequest('/exam/examinationPaper/list?courseId=' + data.courseId + "&facultyId=" + data.institutionId).then(res => {
+          // console.log(res)
+          if (res.data) {
+            that.exams = res.data.data
+          }
+        })
       }
     },
     handleNodeClick(data, checked, node) {

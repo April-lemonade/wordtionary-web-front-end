@@ -667,6 +667,7 @@ export default {
         })
       }
       console.log(series)
+      console.log(examiners)
       for (let i = 0; i < examiner_progress[0].length; i++) {
         total[i] = 0
         for (let j = 0; j < examiner_progress.length; j++) {
