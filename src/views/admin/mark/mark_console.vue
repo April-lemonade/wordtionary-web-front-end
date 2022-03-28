@@ -121,7 +121,7 @@
                 <div slot="footer" class="dialog-footer"
                      style="margin-top: 3%;display:flex;flex-direction:row;justify-content:center">
                   <el-button @click="dialogFormVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="editExaminer()">确 定</el-button>
+                  <el-button type="primary" @click="editExaminer">确 定</el-button>
                 </div>
               </div>
               <div id="progress1"
@@ -596,6 +596,11 @@ export default {
       }]
     }
   },
+  watch: {
+    '$route'(to, from) {
+      this.$router.go(0);
+    }
+  },
   methods: {
     show() {
       console.log("sceswafr")
@@ -607,6 +612,7 @@ export default {
       let obj = JSON.stringify(this.exam)
       // console.log(this.exam)
       this.$router.push({path: '/admin/mark/mark_question', query: {obj: obj}})
+
     },
     toogleExpand(row) {
       this.value = []
@@ -660,6 +666,7 @@ export default {
           data: examiner_progress[i]
         })
       }
+      console.log(series)
       for (let i = 0; i < examiner_progress[0].length; i++) {
         total[i] = 0
         for (let j = 0; j < examiner_progress.length; j++) {
@@ -731,22 +738,27 @@ export default {
     },
     editExaminer() {
       console.log('editExaminer')
+      console.log("originalValue", this.originalValue.indexOf("000004"))
+      console.log(this.value)
       this.dialogFormVisible = false
       let that = this
       let teacherAccount = []
       this.value.forEach(each => {
-        if (that.originalValue.index(each) === -1) {
+        if (that.originalValue.indexOf(each) === -1) {
           teacherAccount[teacherAccount.length] = each
         }
       })
       console.log("teacherAccount", teacherAccount)
       if (teacherAccount) {
-        /*this.$postRequest('/exam/reviewed/set/teacher?examinationPaperId=' + this.exam.id + '&questionIndex=' + this.questionDetail.id + "&teacherAccount=").then(res => {
-        if (res.data) {
-          console.log(res.data)
-        }
-      })*/
+        teacherAccount.forEach(each => {
+          that.$postRequest('/exam/reviewed/set/teacher?examinationPaperId=' + this.exam.id + '&questionIndex=' + this.questionDetail.id + "&teacherAccount=" + each + '').then(res => {
+            if (res) {
+              console.log(res)
+            }
+          })
+        })
       }
+      window.location.reload()
     }
   },
   created() {
@@ -796,7 +808,6 @@ export default {
           data.push({
             label: teacher.name,
             key: teacher.account,
-            disabled: that.value
           });
         });
         that.data = data
@@ -848,5 +859,9 @@ export default {
 
 :deep(.el-transfer-panel__body) {
   height: 190px;
+}
+
+:deep(.element.style) {
+  display: none;
 }
 </style>
