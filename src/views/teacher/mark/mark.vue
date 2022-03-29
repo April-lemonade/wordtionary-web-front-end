@@ -66,71 +66,7 @@ export default {
       filterText: '',
       teacherAccount: '000001',
       checked: [],
-      data: [
-        {
-          id: 2,
-          label: "工商管理学院",
-          disabled: true,
-          children: [
-            {
-              id: 4,
-              label: "人力资源管理",
-            }, {
-              id: 5,
-              label: "企业经济学",
-            }, {
-              id: 6,
-              label: "科学方法论",
-            }, {
-              id: 7,
-              label: "市场营销学",
-            }, {
-              id: 8,
-              label: "广告学",
-            }, {
-              id: 9,
-              label: "消费者行为学",
-            }, {
-              id: 10,
-              label: "商业心理学",
-            }, {
-              id: 11,
-              label: "国际商务概论",
-            },
-          ],
-        }, {
-          id: 3,
-          label: "旅游与城乡管理学院",
-          disabled: true,
-          children: [
-            {
-              id: 12,
-              label: "休闲学",
-            }, {
-              id: 13,
-              label: "旅游企业管理",
-            }, {
-              id: 14,
-              label: "旅游研究方法",
-            }, {
-              id: 15,
-              label: "城市遥感信息",
-            }, {
-              id: 16,
-              label: "城市生态学",
-            }, {
-              id: 17,
-              label: "旅游规划",
-            }, {
-              id: 18,
-              label: "旅游企业会计",
-            }, {
-              id: 19,
-              label: "酒店管理概论",
-            },
-          ],
-        }
-      ],
+      data: [],
       exams: [{
         id: 0,
         name: '2021-2022第2学期线性代数期末考试',
@@ -189,14 +125,8 @@ export default {
     this.$getRequest('/exam/reviewed/get/paper?teacherAccount=' + this.teacherAccount).then(res => {
       console.log(res)
       if (res.data) {
-        /*console.log(res.data)
-        let exams = []
-        res.data.data.forEach(each => {
-          if (each.status === 5)
-            exams[exams.length] = each
-        })*/
         that.exams = res.data
-
+        console.log(that.exams)
       }
     })
   },
