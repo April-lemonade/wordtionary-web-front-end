@@ -1,7 +1,7 @@
 <template>
   <div style="display: flex;flex-direction: row;">
     <div style="width: 90%;margin-left: 10%">
-      <div v-for="(exam,index) in exams" :key="exam.id" @click="show_detail(index)"
+      <div v-for="(exam,index) in exams" :key="exam.id" @click="show_detail(exam)"
            style="border-style: solid;border-width: 1px;border-color: #D7D7D7;margin: 3%;width: 80%;border-radius: 10px;display: flex;flex-direction: column;padding: 2%;cursor: pointer">
         <div style="display: flex;flex-direction: row;justify-content: space-between;width: 100%;margin-bottom: 5%">
           <div>{{ exam.content }}</div>
@@ -87,11 +87,13 @@ export default {
     })
   },
   methods: {
-    show_detail(data) {
-      console.log(data)
-      // let obj = JSON.stringify(this.exams[data])
-      // this.$router.push({path: '/teacher/mark/mark_console', query: {obj: obj}})
-      // if (data.status === 4)
+    show_detail(exam) {
+      if (exam.status === 4) {
+        console.log(exam.paperId)
+        let obj = JSON.stringify(exam)
+        // console.log(this.exam)
+        this.$router.push({path: '/waiting', query: {obj: obj}})
+      }
     },
     handleCheckChange(data, checked, indeterminate) {
       let {id} = data

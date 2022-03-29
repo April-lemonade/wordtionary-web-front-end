@@ -765,56 +765,61 @@ export default {
   created() {
     let that = this
     this.exam = eval('(' + this.$route.query.obj + ')')
-    this.$getRequest('/exam/examinationPaper/info/' + this.exam.id).then(res => {
-      // console.log(res)
-      if (res.data) {
-        that.exam = res.data
-        that.$nextTick(() => {
-          that.exam.section = that.exam.section.split(',')
-          // console.log(that.exam.section.length)
-        })
-      }
+    this.$nextTick(()=>{
+      this.$getRequest('/exam/examinationPaper/info/' + this.exam.id).then(res => {
+        // console.log(res)
+        if (res.data) {
+          that.exam = res.data
+          that.$nextTick(() => {
+            that.exam.section = that.exam.section.split(',')
+            // console.log(that.exam.section.length)
+          })
+        }
+      })
     })
-
   },
   mounted() {
     let that = this
-    this.$getRequest('/exam/reviewed/get/question?examinationPaperId=' + this.exam.id).then(res => {
-      if (res.data) {
-        that.tableData = res.data
-        // console.log(res.data)
-      }
-      // console.log("uuu", that.tableData)
-    })
-    let progress = []
-    this.$getRequest('/exam/reviewed/get/question/progress?examinationPaperId=' + this.exam.id).then(res => {
-      if (res.data) {
-        progress = res.data
-        for (let i = 0; i < that.tableData.length; i++) {
-          that.tableData[i].progress = progress[i]
+    this.$nextTick(()=>{
+      this.$getRequest('/exam/reviewed/get/question?examinationPaperId=' + this.exam.id).then(res => {
+        if (res.data) {
+          that.tableData = res.data
+          let progress = []
+          this.$getRequest('/exam/reviewed/get/question/progress?examinationPaperId=' + this.exam.id).then(res => {
+            if (res.data) {
+              progress = res.data
+              for (let i = 0; i < that.tableData.length; i++) {
+                that.tableData[i].progress = progress[i]
+              }
+            }
+          })
+          // console.log(res.data)
         }
-      }
-    })
-    this.$getRequest('/exam/reviewed/get/paper/progress?examinationPaperId=' + this.exam.id).then(res => {
-      if (res.data) {
-        that.progress = res.data
-      }
-    })
-    const data = []
-    let teachers = []
-    this.$postRequest('/user/teacher/list', {}).then(res => {
-      if (res.data) {
-        teachers = res.data.data
-        teachers.forEach(teacher => {
-          data.push({
-            label: teacher.name,
-            key: teacher.account,
+        // console.log("uuu", that.tableData)
+      })
+
+      this.$getRequest('/exam/reviewed/get/paper/progress?examinationPaperId=' + this.exam.id).then(res => {
+        if (res.data) {
+          that.progress = res.data
+        }
+      })
+      const data = []
+      let teachers = []
+      this.$postRequest('/user/teacher/list', {}).then(res => {
+        if (res.data) {
+          teachers = res.data.data
+          teachers.forEach(teacher => {
+            data.push({
+              label: teacher.name,
+              key: teacher.account,
+            });
           });
-        });
-        that.data = data
-        // console.log(that.data)
-      }
+          that.data = data
+          // console.log(that.data)
+        }
+      })
     })
+
   }
 }
 </script>

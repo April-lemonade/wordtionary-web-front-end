@@ -15,6 +15,12 @@ const routes = [
 
   },
   {
+    path: '/questions',
+    name: 'student_questions',
+    component: () => import('../views/student/questions.vue')
+
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
@@ -43,12 +49,6 @@ const routes = [
         path: 'examination',
         name: 'student_examination',
         component: () => import('../views/student/examination.vue')
-
-      },
-      {
-        path: 'questions',
-        name: 'student_questions',
-        component: () => import('../views/student/questions.vue')
 
       },
       {

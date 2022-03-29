@@ -27,7 +27,7 @@
             <div style="font-weight: bold;margin-bottom: 3%">{{ exam.content }}</div>
             <div style="display: flex;flex-direction: row;text-align: center;margin-bottom: 10%">
               <div style="font-weight: bold;margin-right: 4px">考试时间</div>
-              {{ exam.time }}
+              {{ exam.examTime }}
             </div>
             <div style="margin-bottom: 10%">
               <div>考试说明：</div>
@@ -35,7 +35,8 @@
               <div> 2、保持座位前的桌面干净，不要有与考试无关的内容。</div>
               <div>3、考试时间截止或答题时间结束，如果处于答题页面，将自动提交试卷。</div>
             </div>
-            <el-button type="primary" color="#84cecd" round style="font-size: 18px;padding: 5px">我已仔细阅读考试说明，进入考试</el-button>
+            <el-button type="primary" color="#84cecd" round style="font-size: 18px;padding: 5px" @click="startExam">我已仔细阅读考试说明，进入考试
+            </el-button>
           </div>
         </div>
       </el-scrollbar>
@@ -50,6 +51,20 @@ export default {
   name: "waiting",
   components: {
     ArrowLeftBold
+  },
+  created() {
+    let that = this
+    this.exam = eval('(' + this.$route.query.obj + ')')
+    console.log(this.exam)
+  },
+  methods:{
+    startExam(){
+      let obj = JSON.stringify(this.exam)
+      // console.log(this.exam)
+      this.$router.push({path: '/questions', query: {obj: obj}})
+    }
+  },
+  mounted() {
   },
   data() {
     return {
