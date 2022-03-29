@@ -1,6 +1,7 @@
 <template>
   <div style="display: flex;flex-direction: row">
     <div style="margin: 2%;width: 66%;display: flex;flex-direction: column">
+      <el-button @click="this.$router.go (-1)">退出</el-button>
       <div
           style="justify-content: center;font-size: 20px;font-weight: bold;display: flex;flex-direction: row;margin-bottom: 2%">
         {{ exam.content }}&nbsp;{{ row.detail.id }}题&nbsp;

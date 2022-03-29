@@ -89,8 +89,9 @@ export default {
   methods: {
     show_detail(data) {
       console.log(data)
-      let obj = JSON.stringify(this.exams[data])
-      this.$router.push({path: '/teacher/mark/mark_console', query: {obj: obj}})
+      // let obj = JSON.stringify(this.exams[data])
+      // this.$router.push({path: '/teacher/mark/mark_console', query: {obj: obj}})
+      // if (data.status === 4)
     },
     handleCheckChange(data, checked, indeterminate) {
       let {id} = data

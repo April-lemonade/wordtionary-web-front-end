@@ -28,6 +28,7 @@
         </div>
       </div>
       <div style="margin-top: 3%;width: 100%;display: flex;justify-content: center;flex-direction: row">
+        <el-button @click="this.$router.go (-1)">退出</el-button>
         <el-button type="primary" @click="next">下一份</el-button>
       </div>
       <!--      <el-dialog
@@ -144,11 +145,19 @@ export default {
     },
   },
   created() {
+    let that = this
     this.exam = eval('(' + this.$route.query.exam + ')')
     this.row = eval('(' + this.$route.query.row + ')')
     this.teacherAccount = this.$route.query.teacherAccount
     console.log(this.exam)
     console.log(this.teacherAccount)
+    this.$postRequest('/exam/reviewed/review?examinationPaperId=' + this.exam.paperId + '&questionIndex=' + this.row.info.questionIndex).then(res => {
+      console.log(res)
+      if (res.data) {
+        that.detail = res.data
+        console.log(that.detail)
+      }
+    })
   },
   mounted() {
     let that = this
@@ -158,12 +167,7 @@ export default {
       arr[i] = 0;
     }
     this.exampleScores = arr
-    this.$postRequest('/exam/reviewed/review?examinationPaperId=' + this.exam.paperId + '&questionIndex=' + this.row.detail.id).then(res => {
-      if (res.data) {
-        that.detail = res.data
-        console.log(that.detail)
-      }
-    })
+
   }
 }
 </script>
