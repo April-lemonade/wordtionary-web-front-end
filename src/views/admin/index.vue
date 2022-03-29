@@ -75,7 +75,7 @@
           </div>
         </el-scrollbar>
       </el-aside>
-      <el-main style="margin:0;padding:0;height: calc(100% - 70px)">
+      <el-main style="margin:0;padding:0;height: calc(100vh - 70px)">
         <el-scrollbar>
           <router-view/>
         </el-scrollbar>

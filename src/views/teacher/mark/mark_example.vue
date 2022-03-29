@@ -3,30 +3,30 @@
     <div style="margin: 2%;width: 66%;display: flex;flex-direction: column">
       <div
           style="justify-content: center;font-size: 20px;font-weight: bold;display: flex;flex-direction: row;margin-bottom: 2%">
-        {{ exam.name }}{{ question.qid }}
-        <div v-if="exampleFinished == 0" style="color: red">样卷</div>
+        {{ exam.content }}&nbsp;{{ row.detail.id }}题&nbsp;
+        <div style="color: red">样卷</div>
         批阅
       </div>
       <div
           style="display: flex;flex-direction: row;font-weight: bold;margin-top: 2%;font-size: 20px;margin-bottom: 2%">
-        {{ question.qid }}：{{ question.description }}
+        {{ row.detail.id }}：{{ row.detail.content }}
       </div>
       <div style="color: #a7a7a7;font-weight: bold">学生答案</div>
       <div
           style="border-style: solid;border-width: 1px;border-color: #D7D7D7;border-radius: 5px;margin-top: 2%;padding: 2%">
-        {{ exampleAns[current] }}
+        {{ detail[current].studentAnswer }}
       </div>
       <div style="color: #a7a7a7;font-weight: bold;margin-top: 2%">标准答案</div>
       <div
           style="border-style: solid;border-width: 1px;border-color: #D7D7D7;border-radius: 5px;margin-top: 2%;padding: 2%">
-        {{ question.stdAns }}
+        {{ row.detail.answer }}
       </div>
       <div
           style="background-color: #F7F7F7;padding: 3%;justify-content:space-between;font-weight: bold;font-size: 15px;margin-top: 2%;display: flex;flex-direction: row">
-        <div>满分：{{ question.point }}</div>
+        <div>满分：{{ row.info.fullScore }}</div>
         <div>得分：
-          <el-input-number v-model="exampleScores[current]" @change="handleChange" :min="0"
-                           :max="question.point"></el-input-number>
+          <el-input-number v-model="stuScores[current]" @change="handleChange" :min="0"
+                           :max="row.info.fullScore"></el-input-number>
         </div>
       </div>
       <div style="margin-top: 3%;width: 100%;display: flex;justify-content: center;flex-direction: row">
@@ -39,8 +39,8 @@
         <span>未通过样卷批阅，请重试。</span>
         <template #footer>
       <span class="dialog-footer">
-        <el-button @click="dialogVisible = false">退出</el-button>
-        <el-button type="primary" @click="again">重试</el-button>
+<!--        <el-button @click="dialogVisible = false">退出</el-button>-->
+        <el-button type="primary" @click="dialogVisible = false">重试</el-button>
       </span>
         </template>
       </el-dialog>
@@ -64,7 +64,7 @@
         <el-button type="primary" @click="submit">提交</el-button>
       </div>
       <div style="display: flex;flex-direction: row;flex-wrap: wrap;width: 96%;margin: 2%">
-        <div v-for="(ans,index) in exampleAns" :class="current == index?'active':'inactive'" style="cursor: pointer">
+        <div v-for="(ans,index) in detail" :class="current === index?'active':'inactive'" style="cursor: pointer">
           <div style="display:flex;align-content: center;justify-content: center" @click="current=index">{{
               index + 1
             }}
@@ -86,11 +86,14 @@ export default {
   data() {
     return {
       num: 0,
+      teacherAccount: '',
+      row: {},
+      detail: {},
       paperCount: 1,
       dialogVisible: false,
       dialogVisible1: false,
       score: 0,
-      stuScores: [[0, 0]],
+      stuScores: [],
       error: 10,
       exampleFinished: 0,
       current: 0,
@@ -129,19 +132,35 @@ export default {
       location.reload()
     },
     submit() {
-      console.log(this.exampleScores)
-      for (let i = 0; i < this.stdExampleScores.length; i++) {
-        let max = this.stdExampleScores[i] + this.stdExampleScores[i] * (this.error / 100)
-        let min = this.stdExampleScores[i] - this.stdExampleScores[i] * (this.error / 100)
-        if (this.exampleScores[i] > max || this.exampleScores[i] < min) {
+      console.log(this.stuScores)
+      let stdScores = []
+      this.detail.forEach(each => {
+        stdScores[stdScores.length] = each.score
+      })
+      let that = this
+      for (let i = 0; i < stdScores.length; i++) {
+        let max = stdScores[i] * (1 + this.error / 100)
+        let min = stdScores[i] * (1 - this.error / 100)
+        if (this.stuScores[i] > max || this.stuScores[i] < min) {
           this.dialogVisible = true;
           return;
         }
       }
       this.dialogVisible1 = true
+      this.$postRequest('/exam/reviewed/set/passExample?examinationPaperId=' + this.exam.paperId + '&questionIndex=' + this.row.info.questionIndex + "&teacherAccount=" + this.teacherAccount).then(res => {
+        console.log(res)
+        if (res.data) {
+          let exam = JSON.stringify(that.exam)
+          let rows = JSON.stringify(that.row)
+          this.$router.push({
+            path: '/teacher/mark/mark_question',
+            query: {exam: exam, teacherAccount: that.teacherAccount, row: rows}
+          })
+        }
+      })
     },
     next() {
-      if (this.exampleFinished == 0) {
+      if (this.exampleFinished === 0) {
         if (this.current < this.exampleAns.length - 1) {
           this.current = this.current + 1
           this.exampleScores[this.exampleScores.length] = this.score
@@ -153,18 +172,30 @@ export default {
     },
     handleChange() {
       console.log(this.stuScores);
+    },
+    init() {
+
     }
   },
+  created() {
+    this.exam = eval('(' + this.$route.query.obj + ')')
+    this.row = eval('(' + this.$route.query.row + ')')
+    console.log(this.row)
+    this.teacherAccount = this.$route.query.teacherAccount
+    let that = this
+    this.$postRequest('/exam/reviewed/review/example?examinationPaperId=' + this.exam.paperId + "&questionIndex=" + this.row.info.questionIndex).then(res => {
+      if (res.data) {
+        that.error = res.data.allowableError
+        that.detail = res.data.studentAnswers
+        that.detail.forEach(each => {
+          that.stuScores[that.stuScores.length] = 0
+        })
+        console.log("sds", that.detail[0].studentAnswer)
+      }
+    })
+  },
   mounted() {
-    console.log(this.$route.query.obj)
-    console.log(this.exam.stuAns[0].length)
-    this.exampleFinished = this.$route.query.exampleFinished
-    console.log(this.exampleFinished)
-    let arr = []
-    for (let i = 0; i < this.exampleAns.length; i++) {
-      arr[i] = 0;
-    }
-    this.exampleScores = arr
+
   }
 }
 </script>

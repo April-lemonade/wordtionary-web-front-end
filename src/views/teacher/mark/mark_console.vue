@@ -58,7 +58,10 @@
               <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
                 <div
                     style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
-                  <div style="font-weight: bold">{{ props.row.info.questionId }} &nbsp; {{ props.row.detail.content }}</div>
+                  <div style="font-weight: bold">{{ props.row.info.questionId }} &nbsp; {{
+                      props.row.detail.content
+                    }}
+                  </div>
                   <div style="border-style: solid;border-width: 2px;border-radius: 5px;font-weight: bold">
                     <div v-if="props.row.detail.type === 1">选择题</div>
                     <div v-if="props.row.detail.type === 2">判断题</div>
@@ -559,24 +562,34 @@ export default {
       }],
       questions: [],
       progress: [],
+      row: {}
     }
   },
   methods: {
     judgeMark(row) {
       let that = this
+      this.row = row
       console.log(row.info.passExample === 0)
       if (row.info.passExample === 0) {
         this.dialogFormVisible = true
       } else {
         let rows = JSON.stringify(row)
         let exam = JSON.stringify(this.exam)
-        this.$router.push({path: '/teacher/mark/mark_question', query: {row: rows, exam: exam, teacherAccount: that.teacherAccount}})
+        this.$router.push({
+          path: '/teacher/mark/mark_question',
+          query: {row: rows, exam: exam, teacherAccount: that.teacherAccount}
+        })
       }
     },
     goMark() {
       let obj = JSON.stringify(this.exam)
+      let row = JSON.stringify(this.row)
       console.log(this.exam)
-      this.$router.push({path: '/teacher/mark/mark_example', query: {obj: obj, exampleFinished: 0}})
+      let that = this
+      this.$router.push({
+        path: '/teacher/mark/mark_example',
+        query: {obj: obj, teacherAccount: that.teacherAccount, row: row}
+      })
     },
     toogleExpand(row) {
       this.value = []
