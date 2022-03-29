@@ -45,7 +45,7 @@
           </div>
           <div v-for="data in progress.reviewedQuestionProgressList">
             <div style="display: flex;flex-direction: row">
-              <div style="width: 10%">{{ data.reviewedProgress * 100 }}</div>
+              <div style="width: 10%">{{ data.questionId }}</div>
               <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
                            :stroke-width="15"
                            :percentage="data.reviewedProgress * 100"
@@ -96,7 +96,7 @@
                 </div>
                 <div style="font-weight: bold">正确答案: {{ questionDetail.answer }}</div>
                 <div>
-                  作者：{{ props.row.name }} | 上传时间：{{ questionDetail.createTime }}
+                  作者：{{ questionDetail.name }} | 上传时间：{{ questionDetail.createTime }}
                 </div>
                 <div>难度系数：{{ questionDetail.difficulty }} |
                   知识点：{{ questionDetail.outline }} | 使用次数：{{ questionDetail.usageTimes }}
@@ -132,7 +132,7 @@
 
           </template>
         </el-table-column>
-        <el-table-column label="题号" prop="questionIndex"/>
+        <el-table-column label="题号" prop="questionId"/>
         <el-table-column label="阅卷人">
           <template #default="scope">
             <div style="display: flex;flex-direction: row">
@@ -622,7 +622,7 @@ export default {
       this.thisQid = row.qid
       // console.log(this.thisExaminers)
       let that = this
-      that.$getRequest('/exam/question/info/' + row.questionIndex).then(res => {
+      that.$getRequest('/exam/question/info/' + row.questionId).then(res => {
         if (res.data) {
           that.questionDetail = res.data
           // console.log(res.data)

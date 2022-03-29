@@ -58,7 +58,7 @@
               <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
                 <div
                     style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
-                  <div style="font-weight: bold">{{ props.row.detail.id }} &nbsp; {{ props.row.detail.content }}</div>
+                  <div style="font-weight: bold">{{ props.row.info.questionId }} &nbsp; {{ props.row.detail.content }}</div>
                   <div style="border-style: solid;border-width: 2px;border-radius: 5px;font-weight: bold">
                     <div v-if="props.row.detail.type === 1">选择题</div>
                     <div v-if="props.row.detail.type === 2">判断题</div>
@@ -74,11 +74,10 @@
                 </div>
                 <div style="font-weight: bold">正确答案: {{ props.row.detail.answer }}</div>
                 <div>
-                  作者：{{ props.row.detail.creator }} | 上传时间：{{ props.row.detail.createTime }}
+                  作者：{{ props.row.detail.name }} | 上传时间：{{ props.row.detail.createTime }}
                 </div>
-                <div>难度系数：{{ props.row.detail.difficulty }} |
-                  <!--                  知识点：{{ props.row.point1 }}_{{ props.row.point2 }} -->
-                  | 使用次数：{{ props.row.detail.usageTimes }}
+                <div>难度系数：{{ props.row.detail.difficulty }} | 知识点：{{ props.row.detail.outline }} |
+                  使用次数：{{ props.row.detail.usageTimes }}
                 </div>
                 <!--                <div v-for="examiner in props.row.info.teachers">
                                   阅卷人：{{ examiner.name }} | 阅卷速度：{{ examiner.speed }} 题/分钟 | 批阅份数：{{ examiner.count }} |
@@ -87,19 +86,19 @@
                 <!--                <el-button style="margin-top: 5%" type="primary" plain @click="dialogFormVisible = true">调整阅卷人
                                 </el-button>-->
               </div>
-              <!--              <div id="progress1"
-                                 style="width: 50%;height:300px;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
-                              {{ drawEcharts(props.row.examiners) }}
-                            </div>-->
+              <div id="progress1"
+                   style="width: 50%;height:300px;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
+                {{ drawEcharts(props.row.examiners) }}
+              </div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="题号" prop="detail.id"/>
+        <el-table-column label="题号" prop="info.questionId"/>
         <el-table-column label="阅卷人">
           <template #default="scope">
             <div style="display: flex;flex-direction: row">
               <div v-for="item in scope.row.info.teachers">
-                {{ item }}
+                {{ item }}&nbsp;
                 <!--                <el-popover
                                     placement="bottom"
                                     :title="item.name"
@@ -140,7 +139,7 @@
         <el-table-column label="操作">
           <template #default="scope">
             <el-button type="text" @click="toogleExpand(scope.row)">详情</el-button>
-            <el-button type="text" @click="judgeMark(scope.row.exampleFinished)">批阅</el-button>
+            <el-button type="text" @click="judgeMark(scope.row)">批阅</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -563,12 +562,15 @@ export default {
     }
   },
   methods: {
-    judgeMark(exampleFinished) {
-      if (exampleFinished == 0) {
+    judgeMark(row) {
+      let that = this
+      console.log(row.info.passExample === 0)
+      if (row.info.passExample === 0) {
         this.dialogFormVisible = true
       } else {
-        let obj = JSON.stringify(this.exam)
-        this.$router.push({path: '/teacher/mark/mark_question', query: {obj: obj, exampleFinished: 1}})
+        let rows = JSON.stringify(row)
+        let exam = JSON.stringify(this.exam)
+        this.$router.push({path: '/teacher/mark/mark_question', query: {row: rows, exam: exam, teacherAccount: that.teacherAccount}})
       }
     },
     goMark() {
@@ -589,27 +591,24 @@ export default {
         }
       })
       $table.toggleRowExpansion(row)
+      that.$getRequest('/exam/reviewed/get/teacher/progress?examinationPaperId=' + this.exam.paperId + '&questionIndex=' + row.info.questionIndex).then(res => {
+        if (res.data) {
+          that.examiners = res.data
+          console.log(that.examiners)
+        }
+      })
     },
     drawEcharts(examiners) {
-      //绘制趋势echarts
-      console.log(examiners)
+      console.log(this.examiners)
       let examiner_names = []
       let examiner_progress = []
-      let series = [{
-        name: '',
-        type: '',
-        tooltip: {
-          valueFormatter: function (value) {
-            return value + ' 份';
-          }
-        },
-        data: []
-      }]
+      let series = []
+      let total = []
       for (let i = 0; i < this.examiners.length; i++) {
-        examiner_names[i] = this.examiners[i].name
-        examiner_progress[i] = this.examiners[i].progress
+        examiner_names[i] = this.examiners[i].teacherName
+        examiner_progress[i] = this.examiners[i].reviewedTotalPerHour.slice(this.examiners[i].reviewedTotalPerHour.length - 5, this.examiners[i].reviewedTotalPerHour.length)
         series.push({
-          name: examiners[i].name,
+          name: this.examiners[i].teacherName,
           type: 'bar',
           tooltip: {
             valueFormatter: function (value) {
@@ -619,7 +618,25 @@ export default {
           data: examiner_progress[i]
         })
       }
-
+      console.log(series)
+      console.log(examiners)
+      for (let i = 0; i < examiner_progress[0].length; i++) {
+        total[i] = 0
+        for (let j = 0; j < examiner_progress.length; j++) {
+          total[i] += examiner_progress[j][i]
+        }
+      }
+      series.push({
+        name: '总计',
+        type: 'line',
+        tooltip: {
+          valueFormatter: function (value) {
+            return value + ' 份';
+          }
+        },
+        data: total
+      })
+      // console.log(series)
       let option = {
         tooltip: {
           trigger: 'axis',
@@ -639,11 +656,12 @@ export default {
           }
         },
         legend: {
-          data: examiner_names
+          data: examiners
         },
         xAxis: [
           {
             type: 'category',
+            name: '时刻',
             data: [new Date().getHours() - 4, new Date().getHours() - 3, new Date().getHours() - 2, new Date().getHours() - 1, new Date().getHours()],
             axisPointer: {
               type: 'shadow'
@@ -655,13 +673,13 @@ export default {
             type: 'value',
             name: '批阅份数',
             min: 0,
-            max: 250,
-            interval: 50,
+            max: total[total.length - 1] + 5,
             axisLabel: {
               formatter: '{value}'
             }
           }
         ],
+        series: series
       };
       let chartId = 'tiger-' + arguments[2] + '-trend-index' + arguments[1];
       this.$nextTick(() => {
@@ -680,10 +698,11 @@ export default {
   mounted() {
     let that = this
     this.exam = eval('(' + this.$route.query.obj + ')')
+    console.log(this.exam)
     this.$getRequest('/exam/reviewed/teacher/get/question?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
       if (res.data) {
         res.data.forEach(each => {
-          that.$getRequest('/exam/question/info/' + each.questionIndex).then(res => {
+          that.$getRequest('/exam/question/info/' + each.questionId).then(res => {
             let detail = res.data
             this.$getRequest('/exam/reviewed/teacher/get/question/progress?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
               if (res.data) {
@@ -702,21 +721,6 @@ export default {
         })
       }
     })
-    /*
-        this.$getRequest('/exam/reviewed/teacher/get/question/progress?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
-          if (res.data) {
-            that.progress = res.data
-            for (let i = 0; i < that.questions.length; i++) {
-              that.questions[i].progress = that.progress.reviewedQuestionProgressList[i].reviewedProgress
-              that.questions[i].time = that.progress.reviewedQuestionProgressList[i].estimatedTime
-            }
-            console.log(that.progress.reviewedQuestionProgressList[0])
-          }
-        })
-    */
-    /*    let progress = this.$echarts.init(
-            document.getElementById("progress")
-        );*/
     let series = []
     let name = []
     let max = 0
@@ -769,7 +773,7 @@ export default {
             }
           },
           legend: {
-            data: ['5']
+            data: name
           },
           xAxis: [
             {
