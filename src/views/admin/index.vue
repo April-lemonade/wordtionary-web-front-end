@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container style="height:100%">
     <el-header
         style="width:100%;height:70px;background:white;border-bottom:1px solid  #d7d7d7;box-sizing: border-box;align-items:center;display:flex;justify-content:space-between">
       <img style="height: 80%" src="../../assets/logo.png"/>
@@ -75,7 +75,7 @@
           </div>
         </el-scrollbar>
       </el-aside>
-      <el-main style="margin:0;padding:0;height: calc(100vh - 70px)">
+      <el-main style="margin:0;padding:0;height: calc(100% - 70px)">
         <el-scrollbar>
           <router-view/>
         </el-scrollbar>

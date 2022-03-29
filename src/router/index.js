@@ -59,6 +59,24 @@ const routes = [
     component: () => import('../views/admin/index.vue'),
     children: [
       {
+        path:"questionset/addquestion",
+        component:()=> import("../views/admin/questionset/add_question.vue"),
+        name:"admin_questionset_addquestion"
+
+      },
+      {
+        path:'questionset/allquestion',
+        component:() => import('../views/admin/questionset/allquestion.vue'),
+        name:"admin_questionset_allquestion"
+
+      },
+      {
+        path:"questionset",
+        component:() => import('../views/admin/questionset/questionset.vue'),
+        name:"admin_questionset"
+
+      },
+      {
         path: "grade/detail",
         component: () => import('../views/admin/grade/grade_detail.vue'),
         name: "admin_grade_detail"

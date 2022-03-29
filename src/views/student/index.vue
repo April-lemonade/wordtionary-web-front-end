@@ -28,19 +28,22 @@
               <div style="width:100%;text-align:center">考试</div>
             </div>
           </router-link>
-<!--          <router-link to="/student/grade" style="justify-content:center">
+         <router-link to="/student/grade" style="justify-content:center">
             <div class="navframe">
               <img src="../../assets/grade_icon.svg" style="width:25px;height:20px">
               <div style="width:100%;text-align:center">成绩</div>
             </div>
-          </router-link>-->
-        </div>
-      </el-aside>
-      <el-main style="margin:0;padding:0">
-        <router-view/>
+          </router-link >
+          </div>
+        </el-aside>
+        <el-main style="margin:0;padding:0;height: calc(100vh - 70px)">
+        <el-scrollbar>
+          <router-view/>
+        </el-scrollbar>
       </el-main>
+      </el-container>
     </el-container>
-  </el-container>
+
 </template>
 <script>
 export default {}

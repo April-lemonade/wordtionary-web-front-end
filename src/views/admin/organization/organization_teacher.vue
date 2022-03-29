@@ -9,10 +9,8 @@
     <div style="width:80%;height:60px;display:flex;align-items:center;justify-content:space-between"  >
     <div style="float:left;font-size:20px;">学院</div><img  v-if=!show src="../../../assets/show.png" style="justify-self:flex-end;width:25px;cursor:pointer" @click="show=true"><img v-if=show src="../../../assets/hide.png" style="float:right;width:25px;cursor:pointer" @click="show=false">
     </div>
-     <el-radio-group v-if=show v-model="radio" style="width:80%" fill="#ffffff" text-color="#ffffff">
-    <el-radio :label="3">Option A</el-radio>
-    <el-radio :label="6">Option B</el-radio>
-    <el-radio :label="9">Option C</el-radio>
+     <el-radio-group v-show=show v-model="radio" style="width:80%" fill="#ffffff" text-color="#ffffff" @change="getTeacher()">
+    <el-radio style="margin-top:10px" v-for='item in school_list' :label="item.id" :key="item.id">{{item.facultyName}}</el-radio>
   </el-radio-group>
 </div>
 <div style="width:calc(100%-400px);height:400px;display:flex;justify-content:center">
@@ -25,14 +23,16 @@
     
     style="width: 660px;margin-top:30px;font-size:15px"
   >
-  <el-table-column  align="center"    prop="number" label="工号" sortable width="120" style="font-weight:bolder"/>
+  <el-table-column  align="center"    prop="account" label="工号" sortable width="120" style="font-weight:bolder"/>
    <el-table-column   align="center" prop="name" label="姓名" sortable width="120" />
     <el-table-column  align="center" prop="sex" label="性别" sortable width="120" />
-     <el-table-column align="center"  prop="school" label="学院" sortable width="200" />
+     <el-table-column align="center"  prop="faculty" label="学院" sortable width="200" />
        <el-table-column  align="center"  label="操作"  width="100" >
-           <el-button type="text" style="color: #84cecd;font-size:15px">
+           <template #default='scope'>
+           <el-button type="text" style="color: #84cecd;font-size:15px" @click="$router.push({name:'admin_organization_teacher_detail',query:{id:scope.row.account}})">
                查看
            </el-button>
+           </template>
        </el-table-column>
      </el-table>
 </div>
@@ -48,6 +48,7 @@ export default {
     },
     data(){
         return{
+            school_list:[],
             show:false,
             radio:'',
             tableData:[
@@ -79,6 +80,17 @@ export default {
         }
     },
     methods:{
+        getTeacher(){
+            console.log(1)
+            console.log(this.radio)
+            let that=this
+            this.$postRequest('/user/teacher/list',{'facultyId':that.radio}).then(res=>{
+                if(res.data){
+                    that.tableData=res.data.data
+                }
+            })
+
+        },
         input_focus(){
             var input=document.getElementById("search_icon")
             input.style.position="relative";
@@ -92,6 +104,15 @@ export default {
             input.style.filter="drop-shadow(80px 0 black)";
         }
      
+    },
+    created(){
+        let that=this
+        this.$getRequest('/user/faculty/list').then(res=>{
+            if(res.data){
+                that.school_list=res.data
+            }
+
+        })
     }
 
 }
@@ -121,6 +142,7 @@ export default {
 .el-radio>>>.el-radio__inner{
     width: 14px;
     height: 14px;
+   
 }
 .el-radio>>>.el-radio__inner .is-checked{
     color: black!important;
