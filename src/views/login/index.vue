@@ -18,7 +18,7 @@
                       <el-input style="height:100%" v-model="loginForm.password"></el-input>
                   </el-form-item>
                   <el-form-item style="margin-top:50px">
-                  <el-button type="primary" style="margin:0 auto;height:50px;width:100%;background: #5a61aa;border:none">登录</el-button>
+                  <el-button type="primary" style="margin:0 auto;height:50px;width:100%;background: #5a61aa;border:none" @click="login">登录</el-button>
                    </el-form-item>
                    <el-form-item>
                        <span style="font-size:18px;text-align:center;margin:0 auto;color:white; font-family: 'Arial Normal', 'Arial', sans-serif;">还没有账号?<el-button type="text" style="color: #f3cb65;margin-left:5px;font-size:18px">立即注册</el-button></span>
@@ -49,6 +49,25 @@ export default {
 
             }
 
+        }
+    },
+    methods:{
+        login(){
+            let that=this
+            this.$getRequest('/user/auth/login',{account:that.loginForm.username,pwd:that.loginForm.password}).then(res=>{
+                if(res.code==200){
+                    if(res.data.role==3)
+                    {
+                        that.$router.push('/admin/home')
+                    }else if(res.data.role==1){
+                          that.$router.push('/student/home')
+                    }else if(res.data.role==2){
+                          that.$router.push('/teacher/home')
+                    }
+                }else{
+                    console.log(res.data.data)
+                }
+            })
         }
     }
 
