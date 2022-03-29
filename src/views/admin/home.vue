@@ -1,6 +1,6 @@
 <template>
-  <div style="width:100%;height:calc(100% - 70px);">
-    <div style="width:calc( 100% - 361px);float:left;margin:0 auto;height:calc(100vh - 70px);display:flex;justify-content:center;">
+  <div style="width:100%;height:calc(100vh - 70px);display:flex">
+    <div style="width:calc( 100% - 361px);margin:0 auto;height:calc(100vh - 70px);display:flex;justify-content:center;">
         <div style="width:1300px;justify-content:center;display:flex;margin-top:50px;flex-wrap:wrap;align-content:start">
             <div style="position:relative;width:90%;height:270px;background: white;display:flex;flex-wrap:wrap;justify-content:center;">
                 <img src="../../assets/admin_home_icon.svg" style="position:absolute;z-index:3;left:0;width:430px"/>
@@ -163,7 +163,7 @@
 
 
     </div>
-    <div style="float:right;width:359px;background:#e6e7e8;min-height:calc(100% - 70px);height:auto !important;display:flex;justify-content:center;flex-wrap:wrap;overflow:auto" >
+    <div style="width:359px;background:#e6e7e8;height:auto !important;display:flex;justify-content:center;flex-wrap:wrap;" >
         <div style="display:flex;justify-content:center;flex-wrap:wrap;align-content:start;margin-top:20px;font-family: 'Arial Normal', 'Arial', sans-serif;">
     
           <div style="margin-top:15px;width:315px;display:flex;align-items:center;height:50px;box-sizing:border-box;border-bottom:1px solid #d7d7d7;">

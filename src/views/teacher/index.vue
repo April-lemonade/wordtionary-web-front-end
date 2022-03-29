@@ -1,7 +1,8 @@
 <template>
   <el-container>
     <el-header
-        style="width:100%;height:70px;background:white;border-bottom:1px solid  #d7d7d7;box-sizing: border-box;align-items:center;display:flex;justify-content:end">
+        style="width:100%;height:70px;background:white;border-bottom:1px solid  #d7d7d7;box-sizing: border-box;align-items:center;display:flex;justify-content:space-between">
+      <img style="height: 80%" src="../../assets/logo.png"/>
       <div
           style="display:flex;align-content:center;justify-content:space-around;height:40px;width:250px;align-items:center;margin-right:40px">
         <img src='../../assets/inform_icon.svg' style="width:25px;height:30px;"><img src="../../assets/task_icon.svg"
@@ -27,12 +28,12 @@
               <div style="width:100%;text-align:center">题库</div>
             </div>
           </router-link>
-          <router-link to="/admin/examination/examination" style="justify-content:center">
+<!--          <router-link to="/teacher/examination" style="justify-content:center">
             <div class="navframe">
               <img src="../../assets/examnation_icon.svg" style="width:25px;height:20px">
               <div style="width:100%;text-align:center">考试</div>
             </div>
-          </router-link>
+          </router-link>-->
           <router-link to="/teacher/mark/mark" style="justify-content:center">
             <div class="navframe">
               <img src="../../assets/correct_icon.svg" style="width:20px;height:20px">

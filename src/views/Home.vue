@@ -1,11 +1,13 @@
 <template>
   <div class="home">
-   <div style="height:200px;width:400px;background:yellow;display:flex;flex-direction:row">
-     <div style="height:100px;width:200px;background:green;align-self:end"></div>
+    <div style="height:200px;width:400px;background:yellow;display:flex;flex-direction:row">
+      <div style="height:100px;width:200px;background:green;align-self:end"></div>
 
-  </div>
-  <div id="myChart" :style="{ width: '1200px', height: '500px' }"></div>
-  <el-icon><search/></el-icon>
+    </div>
+    <div id="myChart" :style="{ width: '1200px', height: '500px' }"></div>
+    <el-icon>
+      <search/>
+    </el-icon>
   </div>
 </template>
 
@@ -20,19 +22,20 @@ export default {
     HelloWorld,
 
   },
-  setup(){
-    return{
-
-    }
+  setup() {
+    return {}
   },
-  methods(){
+  methods() {
 
   },
-  mounted(){
-    this.$getRequest('/user/auth/login?account=1912190001&pwd=1912190001').then(res=>{
+  mounted() {
+    /*this.$getRequest('/user/auth/login?account=1912190001&pwd=1912190001').then(res=>{
       if (res) {
         console.log(res)
       }
+    })*/
+    this.$getRequest('/user/teacher/info/' + '000001').then(res => {
+      console.log(res)
     })
     /*this.$axios.get('http://121.196.198.132:7002/user/auth/login?account=1912190001&pwd=1912190001').then(res=>{
       if(res){
@@ -56,36 +59,36 @@ export default {
       }
     })*/
 
-      let myChart = this.$echarts.init(
-          document.getElementById("myChart")
-      );
-      // echarts 配置
-      // 绘制图表
-      myChart.setOption({
-        title: { text: "时间" },
-        tooltip: {},
-        xAxis: {
-          data: ["8-21", "8-22", "8-23", "8-24", "8-25", "8-26"],
+    let myChart = this.$echarts.init(
+        document.getElementById("myChart")
+    );
+    // echarts 配置
+    // 绘制图表
+    myChart.setOption({
+      title: {text: "时间"},
+      tooltip: {},
+      xAxis: {
+        data: ["8-21", "8-22", "8-23", "8-24", "8-25", "8-26"],
+      },
+      yAxis: {},
+      series: [
+        {
+          name: "日期",
+          type: "bar",
+          data: [6, 12, 12, 18, 12, 18],
         },
-        yAxis: {},
-        series: [
-          {
-            name: "日期",
-            type: "bar",
-            data: [6, 12, 12, 18, 12, 18],
-          },
-        ],
-      });
-    }
-
+      ],
+    });
   }
+
+}
 
 
 </script>
 <style scoped>
 
-.el-calendar-table .el-calendar-day{
-height:20px !important
+.el-calendar-table .el-calendar-day {
+  height: 20px !important
 }
 </style>
 

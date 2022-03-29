@@ -4,22 +4,22 @@
       <div
           style="width:42%;display: flex;flex-direction: row;border-style: solid;padding-top: 3%;padding-left:3%;border-width: 1px;box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);border-color: #D7D7D7;margin-right: 1%">
         <div style="display:flex;flex-direction: column;margin-bottom: 2%;width: 70%">
-          <div style="font-weight: bold;font-size: 18px;margin-bottom: 20%">{{ exam.name }}</div>
+          <div style="font-weight: bold;font-size: 18px;margin-bottom: 20%">{{ exam.content }}</div>
           <div class="exam_info">考试时间
-            <div class="exam_info_content">{{ exam.time }}</div>
+            <div class="exam_info_content">{{ exam.examTime }} - {{ exam.endTime }}</div>
           </div>
           <div class="exam_info">考试课程
-            <div class="exam_info_content">{{ exam.course }}</div>
+            <div class="exam_info_content">{{ exam.courseName }}</div>
           </div>
           <div class="exam_info">开课学院
-            <div class="exam_info_content">{{ exam.institution }}</div>
+            <div class="exam_info_content">{{ exam.facultyName }}</div>
           </div>
-          <div class="exam_info">总节数&nbsp;&nbsp;&nbsp;
-            <div class="exam_info_content">4</div>
-          </div>
-          <div class="exam_info">总题数&nbsp;&nbsp;&nbsp;
-            <div class="exam_info_content">56</div>
-          </div>
+          <!--          <div class="exam_info">总节数&nbsp;&nbsp;&nbsp;
+                      <div class="exam_info_content">4</div>
+                    </div>
+                    <div class="exam_info">总题数&nbsp;&nbsp;&nbsp;
+                      <div class="exam_info_content">56</div>
+                    </div>-->
         </div>
         <div :style="note" style="width: 30%;text-align: end;position: relative">
           <!--          <div style="position:absolute;bottom:20px;right:20px;cursor: pointer" @click="goMark">
@@ -35,24 +35,6 @@
                style="position: absolute;top:0;right:0;transform: rotate(270deg);width: 10%"/>
         </div>
         <div id="progress" style="width:100%;height:300px "></div>
-        <!--        <el-scrollbar height="200px">
-                  <div style="display: flex;flex-direction: row;width: 100%">
-                    <div>总进度：</div>
-                    <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
-                                 :stroke-width="15"
-                                 :percentage="exam.progress"
-                                 status="success" color="rgba(19, 137, 116, 1)"></el-progress>
-                  </div>
-                  <div v-for="data in tableData">
-                    <div style="display: flex;flex-direction: row">
-                      <div style="width: 10%">{{ data.qid }}</div>
-                      <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
-                                   :stroke-width="15"
-                                   :percentage="data.progress"
-                                   status="success" color="rgba(19, 137, 116, 1)"></el-progress>
-                    </div>
-                  </div>
-                </el-scrollbar>-->
       </div>
     </div>
     <div
@@ -63,90 +45,98 @@
              style="position: absolute;top:0;right:0;transform: rotate(270deg);width: 5%"/>
       </div>
       <div style="width: 50%;display: flex;flex-direction: row;justify-content: space-between">
-        <div>阅卷进度：62.5%</div>
-        <div>预计完成时间：2022.2.24 16:00</div>
+        <div>阅卷进度：{{ progress.reviewedProgress * 100 }}%</div>
+        <div>预计完成时间：{{ progress.estimatedTime }}</div>
       </div>
       <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;" :text-inside="true" :stroke-width="20"
-                   :percentage="62.5"
+                   :percentage="progress.reviewedProgress*100"
                    status="success" color="rgba(19, 137, 116, 1)"></el-progress>
-      <!--      <div>只展示未批改完的题目
-              <el-switch v-model="onlying" active-color="rgba(19, 137, 116, 1)"></el-switch>
-            </div>-->
-      <el-table ref="table" :data="tableData" style="width: 98%">
+      <el-table ref="table" :data="questions" style="width: 98%">
         <el-table-column type="expand">
           <template #default="props">
             <div style="display: flex;flex-direction: row">
               <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
                 <div
                     style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
-                  <div style="font-weight: bold">{{ props.row.date }} &nbsp; {{ props.row.description }}</div>
+                  <div style="font-weight: bold">{{ props.row.detail.id }} &nbsp; {{ props.row.detail.content }}</div>
                   <div style="border-style: solid;border-width: 2px;border-radius: 5px;font-weight: bold">
-                    {{ props.row.type }}
+                    <div v-if="props.row.detail.type === 1">选择题</div>
+                    <div v-if="props.row.detail.type === 2">判断题</div>
+                    <div v-if="props.row.detail.type === 3">填空题</div>
                   </div>
-                  <div style="font-weight: bold">分值: {{ props.row.score }}</div>
+                  <div style="font-weight: bold">分值: {{ props.row.info.fullScore }}</div>
                 </div>
-                <div style="font-weight: bold">正确答案: {{ props.row.ans }}</div>
+                <div v-if="props.row.detail.type === 1" style="display: flex;flex-direction: column">
+                  <div>A. {{ props.row.detail.a }}</div>
+                  <div>B. {{ props.row.detail.b }}</div>
+                  <div>C. {{ props.row.detail.c }}</div>
+                  <div>D. {{ props.row.detail.d }}</div>
+                </div>
+                <div style="font-weight: bold">正确答案: {{ props.row.detail.answer }}</div>
                 <div>
-                  作者：{{ props.row.updater }} | 上传时间：{{ props.row.updateTime }}
+                  作者：{{ props.row.detail.creator }} | 上传时间：{{ props.row.detail.createTime }}
                 </div>
-                <div>难度系数：{{ props.row.difficulty }} |
-                  知识点：{{ props.row.point1 }}_{{ props.row.point2 }} | 使用次数：{{ props.row.useCount }}
+                <div>难度系数：{{ props.row.detail.difficulty }} |
+                  <!--                  知识点：{{ props.row.point1 }}_{{ props.row.point2 }} -->
+                  | 使用次数：{{ props.row.detail.usageTimes }}
                 </div>
-                <div v-for="examiner in props.row.examiners">
-                  阅卷人：{{ examiner.name }} | 阅卷速度：{{ examiner.speed }} 题/分钟 | 批阅份数：{{ examiner.count }} |
-                  预计完成时间：{{ examiner.time }}
-                </div>
+                <!--                <div v-for="examiner in props.row.info.teachers">
+                                  阅卷人：{{ examiner.name }} | 阅卷速度：{{ examiner.speed }} 题/分钟 | 批阅份数：{{ examiner.count }} |
+                                  预计完成时间：{{ examiner.time }}
+                                </div>-->
                 <!--                <el-button style="margin-top: 5%" type="primary" plain @click="dialogFormVisible = true">调整阅卷人
                                 </el-button>-->
               </div>
-              <div id="progress1"
-                   style="width: 50%;height:300px;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
-                {{ drawEcharts(props.row.examiners) }}
-              </div>
+              <!--              <div id="progress1"
+                                 style="width: 50%;height:300px;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
+                              {{ drawEcharts(props.row.examiners) }}
+                            </div>-->
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="题号" prop="qid"/>
+        <el-table-column label="题号" prop="detail.id"/>
         <el-table-column label="阅卷人">
           <template #default="scope">
             <div style="display: flex;flex-direction: row">
-              <div v-for="item in scope.row.examiners">
-                <el-popover
-                    placement="bottom"
-                    :title="item.name"
-                    :width="200"
-                    trigger="hover"
-                    content="this is content, this is content, this is content">
-                  <template #reference>
-                    <p>{{ item.name }}&nbsp;</p>
-                  </template>
-                  <div style="display:flex;flex-direction: row;font-size: 10px">
-                    预计完成时间：{{ item.time }}
-                  </div>
-                  <div style="font-size: 10px;display: flex;flex-direction: row">
-                    <div style="width: 80px">阅卷总进度：</div>
-                    <el-progress style="width: 50%;font-size: 10px" :stroke-width="5" :percentage="item.allProgress"
-                                 color="rgba(19, 137, 116, 1)"></el-progress>
-                  </div>
-                  <div style="font-size: 10px">
-                    <div v-for="progress in item.progresses" style="display: flex;flex-direction: row">
-                      <div style="width: 80px;">{{ progress.qid }}</div>
-                      <el-progress style="width: 50%;font-size: 10px" :stroke-width="5" :percentage="progress.progress"
-                                   color="rgba(19, 137, 116, 1)"></el-progress>
-                    </div>
-                  </div>
-                </el-popover>
+              <div v-for="item in scope.row.info.teachers">
+                {{ item }}
+                <!--                <el-popover
+                                    placement="bottom"
+                                    :title="item.name"
+                                    :width="200"
+                                    trigger="hover"
+                                    content="this is content, this is content, this is content">
+                                  <template #reference>
+                                    <p>{{ item.name }}&nbsp;</p>
+                                  </template>
+                                  <div style="display:flex;flex-direction: row;font-size: 10px">
+                                    预计完成时间：{{ item.time }}
+                                  </div>
+                                  <div style="font-size: 10px;display: flex;flex-direction: row">
+                                    <div style="width: 80px">阅卷总进度：</div>
+                                    <el-progress style="width: 50%;font-size: 10px" :stroke-width="5" :percentage="item.allProgress"
+                                                 color="rgba(19, 137, 116, 1)"></el-progress>
+                                  </div>
+                                  <div style="font-size: 10px">
+                                    <div v-for="progress in item.progresses" style="display: flex;flex-direction: row">
+                                      <div style="width: 80px;">{{ progress.qid }}</div>
+                                      <el-progress style="width: 50%;font-size: 10px" :stroke-width="5" :percentage="progress.progress"
+                                                   color="rgba(19, 137, 116, 1)"></el-progress>
+                                    </div>
+                                  </div>
+                                </el-popover>-->
               </div>
             </div>
           </template>
         </el-table-column>
         <el-table-column label="阅卷进度" prop="progress">
           <template #default="scope">
-            <el-progress style="width: 80%;" :text-inside="true" :stroke-width="15" :percentage="scope.row.progress"
+            <el-progress style="width: 80%;" :text-inside="true" :stroke-width="15"
+                         :percentage="scope.row.progress.reviewedProgress*100"
                          color="rgba(19, 137, 116, 1)"></el-progress>
           </template>
         </el-table-column>
-        <el-table-column label="预计完成时间" prop="time"/>
+        <el-table-column label="预计完成时间" prop="progress.estimatedTime"/>
         <el-table-column label="操作">
           <template #default="scope">
             <el-button type="text" @click="toogleExpand(scope.row)">详情</el-button>
@@ -193,6 +183,7 @@ export default {
       return data;
     }
     return {
+      teacherAccount: '000001',
       data: generateData(),
       value: [1, 2],
       filterMethod(query, item) {
@@ -566,7 +557,9 @@ export default {
       examiners: [{
         name: '赵国庆',
         progress: [0, 20, 50, 76, 98]
-      }]
+      }],
+      questions: [],
+      progress: [],
     }
   },
   methods: {
@@ -590,9 +583,6 @@ export default {
       this.thisQid = row.qid
       console.log(this.thisExaminers)
       let that = this
-      row.examiners.forEach((examiner, index) => {
-        that.value.push(examiner.id)
-      })
       this.tableData.map((item) => {
         if (row.qid != item.qid) {
           $table.toggleRowExpansion(item, false)
@@ -671,62 +661,12 @@ export default {
               formatter: '{value}'
             }
           }
-          /*,
-          {
-            type: 'value',
-            name: 'Temperature',
-            min: 0,
-            max: 25,
-            interval: 5,
-            axisLabel: {
-              formatter: '{value} °C'
-            }
-          }
-          */
         ],
-        /*series: [
-          {
-            name: 'Evaporation',
-            type: 'bar',
-            tooltip: {
-              valueFormatter: function (value) {
-                return value + ' 份';
-              }
-            },
-            data: [
-              2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3
-            ]
-          },
-          {
-            name: 'Precipitation',
-            type: 'bar',
-            tooltip: {
-              valueFormatter: function (value) {
-                return value + ' ml';
-              }
-            },
-            data: [
-              2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
-            ]
-          },
-          {
-            name: 'Temperature',
-            type: 'line',
-            yAxisIndex: 0,
-            tooltip: {
-              valueFormatter: function (value) {
-                return value + ' °C';
-              }
-            },
-            data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-          }
-        ]*/
       };
       let chartId = 'tiger-' + arguments[2] + '-trend-index' + arguments[1];
       this.$nextTick(() => {
         let myChart = this.$echarts.init(document.getElementById('progress1'));
         myChart.setOption(option);
-        myChart.setSeries(series);
         myChart.resize();
       });
     },
@@ -738,98 +678,131 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route.query.obj)
+    let that = this
     this.exam = eval('(' + this.$route.query.obj + ')')
-    console.log("ooo", this.exam.progress)
-    this.exam.progress = 62.5
-    let progress = this.$echarts.init(
-        document.getElementById("progress")
-    );
-    // echarts 配置
-    // 绘制图表
-    progress.setOption({
-      tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-          type: 'cross',
-          crossStyle: {
-            color: '#999'
-          }
-        }
-      },
-      toolbox: {
-        feature: {
-          dataView: {show: true, readOnly: false},
-          magicType: {show: true, type: ['line', 'bar']},
-          restore: {show: true},
-          saveAsImage: {show: true}
-        }
-      },
-      legend: {
-        data: ['Evaporation', 'Precipitation', 'Temperature']
-      },
-      xAxis: [
-        {
-          type: 'category',
-          data: [new Date().getHours() - 4, new Date().getHours() - 3, new Date().getHours() - 2, new Date().getHours() - 1, new Date().getHours()],
-          axisPointer: {
-            type: 'shadow'
-          }
-        }
-      ],
-      yAxis: [
-        {
-          type: 'value',
-          name: '批阅份数',
-          min: 0,
-          max: 250,
-          interval: 50,
-        },
-      ],
-      series: [
-        {
-          name: 'Evaporation',
-          type: 'bar',
-          tooltip: {
-            valueFormatter: function (value) {
-              return value + ' ml';
+    this.$getRequest('/exam/reviewed/teacher/get/question?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
+      if (res.data) {
+        res.data.forEach(each => {
+          that.$getRequest('/exam/question/info/' + each.questionIndex).then(res => {
+            let detail = res.data
+            this.$getRequest('/exam/reviewed/teacher/get/question/progress?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
+              if (res.data) {
+                that.progress = res.data
+                res.data.reviewedQuestionProgressList.forEach(every => {
+                  that.questions.push({
+                    info: each,
+                    detail: detail,
+                    progress: every
+                  })
+                })
+              }
+              console.log(that.questions)
+            })
+          })
+        })
+      }
+    })
+    /*
+        this.$getRequest('/exam/reviewed/teacher/get/question/progress?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
+          if (res.data) {
+            that.progress = res.data
+            for (let i = 0; i < that.questions.length; i++) {
+              that.questions[i].progress = that.progress.reviewedQuestionProgressList[i].reviewedProgress
+              that.questions[i].time = that.progress.reviewedQuestionProgressList[i].estimatedTime
             }
-          },
-          data: [
-            2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0,
-          ]
-        },
-        {
-          name: 'Precipitation',
-          type: 'bar',
-          tooltip: {
-            valueFormatter: function (value) {
-              return value + ' ml';
-            }
-          },
-          data: [
-            2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8,
-          ]
-        },
-        {
-          name: 'Temperature',
+            console.log(that.progress.reviewedQuestionProgressList[0])
+          }
+        })
+    */
+    /*    let progress = this.$echarts.init(
+            document.getElementById("progress")
+        );*/
+    let series = []
+    let name = []
+    let max = 0
+    this.$getRequest('/exam/reviewed/teacher/get/paper/progress?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
+      if (res.data) {
+        console.log(res.data)
+        res.data.questionProgressList.forEach(each => {
+          name[name.length] = each.questionIndex + ''
+          series.push({
+            name: each.questionIndex + '',
+            type: 'bar',
+            tooltip: {
+              valueFormatter: function (value) {
+                return value + ' 份';
+              }
+            },
+            data: each.questionProgress.slice(each.questionProgress.length - 5, each.questionProgress.length)
+          })
+        })
+        series.push({
+          name: '总计',
           type: 'line',
-          yAxisIndex: 0,
           tooltip: {
             valueFormatter: function (value) {
-              return value + ' °C';
+              return value + ' 份';
             }
           },
-          data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5,]
+          data: res.data.totalProgress.slice(res.data.totalProgress.length - 5, res.data.totalProgress.length)
+        })
+        max = res.data.totalProgress[res.data.totalProgress.length - 1] + 5
+        /*        console.log(max)
+                console.log(series)
+                console.log(name)*/
+        let option = {
+          tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+              type: 'cross',
+              crossStyle: {
+                color: '#999'
+              }
+            }
+          },
+          toolbox: {
+            feature: {
+              dataView: {show: true, readOnly: false},
+              magicType: {show: true, type: ['line', 'bar']},
+              restore: {show: true},
+              saveAsImage: {show: true}
+            }
+          },
+          legend: {
+            data: ['5']
+          },
+          xAxis: [
+            {
+              name: '时刻',
+              type: 'category',
+              data: [new Date().getHours() - 4, new Date().getHours() - 3, new Date().getHours() - 2, new Date().getHours() - 1, new Date().getHours()],
+              axisPointer: {
+                type: 'shadow'
+              }
+            }
+          ],
+          yAxis: [
+            {
+              type: 'value',
+              name: '批阅份数',
+              min: 0,
+              max: max,
+            },
+          ],
+          series: series
         }
-      ]
-    });
+        let myChart = this.$echarts.init(document.getElementById('progress'));
+        myChart.setOption(option);
+        myChart.resize();
+      }
+    })
   }
 }
 </script>
 
 <style scoped>
 .exam_info {
+  width: 600px;
   display: flex;
   flex-direction: row;
   margin-bottom: 2%;

@@ -1,47 +1,47 @@
 <template>
   <div style="display: flex;flex-direction: row;">
-    <!--    <div-->
-    <!--        style="border-right-style: solid;border-right-width: 1px;height:calc(100vh - 70px);padding-left: 5%;padding-right: 5%;border-right-color: #D7D7D7;width: 23%">-->
-    <!--      <div style="display: flex;flex-direction: column;">-->
-    <!--        <el-input-->
-    <!--            style="margin-top: 10%;margin-bottom: 10%"-->
-    <!--            size="large"-->
-    <!--            placeholder="输入课程名称进行过滤"-->
-    <!--            v-model="filterText">-->
-    <!--        </el-input>-->
-    <!--        <div>-->
-    <!--          <el-tree class="filter-tree" ref="tree" node-key="id" :filter-node-method="filterNode" :data="data"-->
-    <!--                   accordion show-checkbox-->
-    <!--                   :default-expanded-keys="[1,2]"-->
-    <!--                   :props="defaultProps"-->
-    <!--                   check-strictly-->
-    <!--                   @check-change="handleCheckChange"-->
-    <!--          ></el-tree>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--    <div v-if="!checked[0]"
+    <!--    <div
+            style="border-right-style: solid;border-right-width: 1px;height:calc(100vh - 70px);padding-left: 5%;padding-right: 5%;border-right-color: #D7D7D7;width: 23%">
+          <div style="display: flex;flex-direction: column;">
+            <el-input
+                style="margin-top: 10%;margin-bottom: 10%"
+                size="large"
+                placeholder="输入课程名称进行过滤"
+                v-model="filterText">
+            </el-input>
+            <div>
+              <el-tree class="filter-tree" ref="tree" node-key="id" :filter-node-method="filterNode" :data="data"
+                       accordion show-checkbox
+                       :default-expanded-keys="[1,2]"
+                       :props="defaultProps"
+                       check-strictly
+                       @check-change="handleCheckChange"
+              ></el-tree>
+            </div>
+          </div>
+        </div>
+        <div v-if="!checked[0]"
              style="display: flex;flex-direction: row;align-items:center;justify-content: center;width: 77%;height:calc(100vh - 70px);">
           <el-icon :size="20">
             <d-arrow-left/>
           </el-icon>
           请选择左侧的课程，查看批阅情况
         </div>-->
-    <div style="width: 90%;margin: 5%">
+    <div style="width: 90%;margin-left: 5%;margin-top: 3%">
       <div v-for="(exam,index) in exams" :key="exam.id" @click="show_detail(index)"
-           style="border-style: solid;border-width: 1px;border-color: #D7D7D7;margin: 3%;width: 80%;border-radius: 10px;display: flex;flex-direction: column;padding: 2%;cursor: pointer">
+           style="border-style: solid;border-width: 1px;border-color: #D7D7D7;margin-left: 5%;width: 80%;border-radius: 10px;display: flex;flex-direction: column;padding: 2%;cursor: pointer">
         <div style="display: flex;flex-direction: row;justify-content: space-between;width: 100%;margin-bottom: 5%">
-          <div>{{ exam.name }}</div>
-          <el-tag class="mx-1" type="success" effect="dark" style="justify-self: flex-end">
-            {{ exam.status }}
-          </el-tag>
+          <div>{{ exam.content }}</div>
+          <!--          <el-tag class="mx-1" type="success" effect="dark" style="justify-self: flex-end">
+                      {{ exam.status }}
+                    </el-tag>-->
         </div>
-        <div style="display: flex;flex-direction: row;justify-content: space-between;width: 60%">
-          <div>{{ exam.course }}</div>
+        <div style="display: flex;flex-direction: row;justify-content: space-between;width: 80%">
+          <div>{{ exam.courseName }}</div>
           <div>|</div>
-          <div>{{ exam.institution }}</div>
+          <div>{{ exam.facultyName }}</div>
           <div>|</div>
-          <div>{{ exam.time }}</div>
+          <div>{{ exam.examTime }} - {{ exam.endTime }}</div>
         </div>
       </div>
     </div>
@@ -64,6 +64,7 @@ export default {
   data() {
     return {
       filterText: '',
+      teacherAccount: '000001',
       checked: [],
       data: [
         {
@@ -157,6 +158,47 @@ export default {
         label: "label",
       },
     };
+  },
+  mounted() {
+    this.data = []
+    let that = this
+    this.$getRequest('/user/faculty/list').then(res => {
+      if (res.data) {
+        for (let i = 0; i < res.data.length; i++) {
+          let id1 = res.data[i].id
+          that.data.push({
+            id: res.data[i].id,
+            label: res.data[i].facultyName,
+            disabled: true,
+            children: []
+          })
+          that.$getRequest('/user/course/list?facultyId=' + res.data[i].id).then(res => {
+            for (let j = 0; j < res.data.data.length; j++) {
+              let id = res.data.data[j].id + i
+              that.data[i].children.push({
+                id: id,
+                courseId: res.data.data[j].id,
+                institutionId: id1,
+                label: res.data.data[j].course
+              })
+            }
+          })
+        }
+      }
+    })
+    this.$getRequest('/exam/reviewed/get/paper?teacherAccount=' + this.teacherAccount).then(res => {
+      console.log(res)
+      if (res.data) {
+        /*console.log(res.data)
+        let exams = []
+        res.data.data.forEach(each => {
+          if (each.status === 5)
+            exams[exams.length] = each
+        })*/
+        that.exams = res.data
+
+      }
+    })
   },
   methods: {
     show_detail(data) {

@@ -6,7 +6,7 @@
         <div style="display:flex;flex-direction: column;margin-bottom: 2%;width: 70%">
           <div style="font-weight: bold;font-size: 18px;margin-bottom: 20%">{{ exam.content }}</div>
           <div class="exam_info">考试时间
-            <div class="exam_info_content">{{ exam.examTime }}</div>
+            <div class="exam_info_content">{{ exam.examTime }} - {{ exam.endTime }}</div>
           </div>
           <div class="exam_info">考试课程
             <div class="exam_info_content">{{ exam.course }}</div>
@@ -15,10 +15,10 @@
             <div class="exam_info_content">{{ exam.facultyName }}</div>
           </div>
           <div class="exam_info">总节数&nbsp;&nbsp;&nbsp;
-            <div class="exam_info_content">{{ section.length }}</div>
+            <div class="exam_info_content">{{ exam.section.length }}</div>
           </div>
           <div class="exam_info">总题数&nbsp;&nbsp;&nbsp;
-            <div class="exam_info_content">{{ section[section.length - 1] }}</div>
+            <div class="exam_info_content">{{ exam.section[exam.section.length - 1] }}</div>
           </div>
         </div>
         <div :style="note" style="width: 30%;text-align: end;position: relative">
@@ -40,15 +40,15 @@
             <div>总进度：</div>
             <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
                          :stroke-width="15"
-                         :percentage="exam.progress"
+                         :percentage="progress.reviewedProgress * 100"
                          status="success" color="rgba(19, 137, 116, 1)"></el-progress>
           </div>
-          <div v-for="data in tableData">
+          <div v-for="data in progress.reviewedQuestionProgressList">
             <div style="display: flex;flex-direction: row">
-              <div style="width: 10%">{{ data.qid }}</div>
+              <div style="width: 10%">{{ data.reviewedProgress * 100 }}</div>
               <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
                            :stroke-width="15"
-                           :percentage="data.progress"
+                           :percentage="data.reviewedProgress * 100"
                            status="success" color="rgba(19, 137, 116, 1)"></el-progress>
             </div>
           </div>
@@ -76,21 +76,30 @@
         <el-table-column type="expand">
           <template #default="props">
             <div style="display: flex;flex-direction: row">
-              <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
+              <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%"
+                   v-if="dialogFormVisible === false">
                 <div
                     style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
-                  <div style="font-weight: bold">{{ props.row.date }} &nbsp; {{ props.row.description }}</div>
+                  <div style="font-weight: bold">{{ questionDetail.id }} &nbsp; {{ questionDetail.content }}</div>
                   <div style="border-style: solid;border-width: 2px;border-radius: 5px;font-weight: bold">
-                    {{ props.row.type }}
+                    <div v-if="questionDetail.type === 1">选择题</div>
+                    <div v-if="questionDetail.type === 2">判断题</div>
+                    <div v-if="questionDetail.type === 3">填空题</div>
                   </div>
-                  <div style="font-weight: bold">分值: {{ props.row.score }}</div>
+                  <!--                  <div style="font-weight: bold">分值: {{ props.row.score }}</div>-->
                 </div>
-                <div style="font-weight: bold">正确答案: {{ props.row.ans }}</div>
+                <div v-if="questionDetail.type === 1" style="display: flex;flex-direction: column">
+                  <div>A. {{ questionDetail.a }}</div>
+                  <div>B. {{ questionDetail.b }}</div>
+                  <div>C. {{ questionDetail.c }}</div>
+                  <div>D. {{ questionDetail.d }}</div>
+                </div>
+                <div style="font-weight: bold">正确答案: {{ questionDetail.answer }}</div>
                 <div>
-                  作者：{{ props.row.updater }} | 上传时间：{{ props.row.updateTime }}
+                  作者：{{ props.row.name }} | 上传时间：{{ questionDetail.createTime }}
                 </div>
-                <div>难度系数：{{ props.row.difficulty }} |
-                  知识点：{{ props.row.point1 }}_{{ props.row.point2 }} | 使用次数：{{ props.row.useCount }}
+                <div>难度系数：{{ questionDetail.difficulty }} |
+                  知识点：{{ questionDetail.outline }} | 使用次数：{{ questionDetail.usageTimes }}
                 </div>
                 <div v-for="examiner in props.row.examiners">
                   阅卷人：{{ examiner.name }} | 阅卷速度：{{ examiner.speed }} 题/分钟 | 批阅份数：{{ examiner.count }} |
@@ -99,55 +108,74 @@
                 <el-button style="margin-top: 5%" type="primary" plain @click="dialogFormVisible = true">调整阅卷人
                 </el-button>
               </div>
+              <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 1%"
+                   v-if="dialogFormVisible">
+                <el-transfer
+                    filterable
+                    :filter-method="filterMethod"
+                    :titles="['待选', '已选']"
+                    filter-placeholder="请输入阅卷人姓名"
+                    v-model="value"
+                    :data="data">
+                </el-transfer>
+                <div slot="footer" class="dialog-footer"
+                     style="margin-top: 3%;display:flex;flex-direction:row;justify-content:center">
+                  <el-button @click="dialogFormVisible = false">取 消</el-button>
+                  <el-button type="primary" @click="editExaminer">确 定</el-button>
+                </div>
+              </div>
               <div id="progress1"
                    style="width: 50%;height:300px;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
-                {{ drawEcharts(props.row.examiners) }}
+                {{ drawEcharts(props.row.teachers) }}
               </div>
             </div>
+
           </template>
         </el-table-column>
-        <el-table-column label="题号" prop="qid"/>
+        <el-table-column label="题号" prop="questionIndex"/>
         <el-table-column label="阅卷人">
           <template #default="scope">
             <div style="display: flex;flex-direction: row">
-              <div v-for="item in scope.row.examiners">
-                <el-popover
-                    placement="bottom"
-                    :title="item.name"
-                    :width="200"
-                    trigger="hover"
-                    content="this is content, this is content, this is content"
-                >
-                  <template #reference>
-                    <p>{{ item.name }}&nbsp;</p>
-                  </template>
-                  <div style="display:flex;flex-direction: row;font-size: 10px">
-                    预计完成时间：{{ item.time }}
-                  </div>
-                  <div style="font-size: 10px;display: flex;flex-direction: row">
-                    <div style="width: 80px">阅卷总进度：</div>
-                    <el-progress style="width: 50%;font-size: 10px" :stroke-width="5" :percentage="item.allProgress"
-                                 color="rgba(19, 137, 116, 1)"></el-progress>
-                  </div>
-                  <div style="font-size: 10px">
-                    <div v-for="progress in item.progresses" style="display: flex;flex-direction: row">
-                      <div style="width: 80px;">{{ progress.qid }}</div>
-                      <el-progress style="width: 50%;font-size: 10px" :stroke-width="5" :percentage="progress.progress"
-                                   color="rgba(19, 137, 116, 1)"></el-progress>
-                    </div>
-                  </div>
-                </el-popover>
+              <div v-for="item in scope.row.teachers">
+                <!--                <el-popover
+                                    placement="bottom"
+                                    :title="item.name"
+                                    :width="200"
+                                    trigger="hover"
+                                    content="this is content, this is content, this is content"
+                                >
+                                  <template #reference>
+                                    <p>{{ item.name }}&nbsp;</p>
+                                  </template>
+                                  <div style="display:flex;flex-direction: row;font-size: 10px">
+                                    预计完成时间：{{ item.time }}
+                                  </div>
+                                  <div style="font-size: 10px;display: flex;flex-direction: row">
+                                    <div style="width: 80px">阅卷总进度：</div>
+                                    <el-progress style="width: 50%;font-size: 10px" :stroke-width="5" :percentage="item.allProgress"
+                                                 color="rgba(19, 137, 116, 1)"></el-progress>
+                                  </div>
+                                  <div style="font-size: 10px">
+                                    <div v-for="progress in item.progresses" style="display: flex;flex-direction: row">
+                                      <div style="width: 80px;">{{ progress.qid }}</div>
+                                      <el-progress style="width: 50%;font-size: 10px" :stroke-width="5" :percentage="progress.progress"
+                                                   color="rgba(19, 137, 116, 1)"></el-progress>
+                                    </div>
+                                  </div>
+                                </el-popover>-->
+                {{ item }}&nbsp;
               </div>
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="阅卷进度" prop="progress">
+        <el-table-column label="阅卷进度" prop="progress.reviewedProgress">
           <template #default="scope">
-            <el-progress style="width: 80%;" :text-inside="true" :stroke-width="15" :percentage="scope.row.progress"
+            <el-progress style="width: 80%;" :text-inside="true" :stroke-width="15"
+                         :percentage="scope.row.progress.reviewedProgress*100"
                          color="rgba(19, 137, 116, 1)"></el-progress>
           </template>
         </el-table-column>
-        <el-table-column label="预计完成时间" prop="time"/>
+        <el-table-column label="预计完成时间" prop="progress.estimatedTime"/>
         <el-table-column label="操作">
           <template #default="scope">
             <el-button type="text" @click="toogleExpand(scope.row)">查看详情</el-button>
@@ -163,43 +191,41 @@
             v-model="value"
             :data="data">
         </el-transfer>
+        <!--        <el-transfer :data="data" filterable
+                             :filter-method="filterMethod"
+                             :titles="['待选', '已选']"
+                             filter-placeholder="请输入阅卷人姓名" :left-default-checked="value"></el-transfer>-->
         <div slot="footer" class="dialog-footer"
              style="margin-top: 5%;display:flex;flex-direction:row;justify-content:right">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
           <el-button type="primary" @click="editExaminer()">确 定</el-button>
         </div>
       </el-dialog>
+      <el-dialog
+          title="提示"
+          v-model="dialogVisible"
+          width="30%">
+        <span>这是一段信息</span>
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+      </el-dialog>
     </div>
   </div>
 </template>
 
 <script>
+import log from "@/views/admin/log";
+
 export default {
   name: "mark_console",
   data() {
-    const generateData = _ => {
-      const data = [];
-      const cities = [{
-        id: 0,
-        name: '赵国庆'
-      }, {
-        id: 1,
-        name: '王金材'
-      }, {
-        id: 2,
-        name: '黄子键'
-      }];
-      cities.forEach((city, index) => {
-        data.push({
-          label: city.name,
-          key: index,
-        });
-      });
-      return data;
-    }
     return {
-      data: generateData(),
-      value: [1, 2],
+      dialogVisible: false,
+      data: [],
+      value: [],
+      originalValue: [],
       filterMethod(query, item) {
         return item.label.indexOf(query) > -1;
       },
@@ -220,9 +246,10 @@ export default {
         sectionCount: 4,
         progress: 62,
       },
-      // onlying: false,
       dialogFormVisible: false,
+      questionDetail: [],
       thisQid: 0,
+      progress: [],
       section: [],
       question: [],
       tableData: [
@@ -569,22 +596,47 @@ export default {
       }]
     }
   },
+  watch: {
+    '$route'(to, from) {
+      this.$router.go(0);
+    }
+  },
   methods: {
+    show() {
+      console.log("sceswafr")
+      console.log(this.dialogFormVisible)
+      this.dialogFormVisible = true
+      console.log(this.dialogFormVisible)
+    },
     goMark() {
       let obj = JSON.stringify(this.exam)
-      console.log(this.exam)
+      // console.log(this.exam)
       this.$router.push({path: '/admin/mark/mark_question', query: {obj: obj}})
+
     },
     toogleExpand(row) {
       this.value = []
       let $table = this.$refs.table
-      console.log('dsd', $table)
+      // console.log('dsd', $table)
       this.thisExaminers = row.examiners
       this.thisQid = row.qid
-      console.log(this.thisExaminers)
+      // console.log(this.thisExaminers)
       let that = this
-      row.examiners.forEach((examiner, index) => {
-        that.value.push(examiner.id)
+      that.$getRequest('/exam/question/info/' + row.questionIndex).then(res => {
+        if (res.data) {
+          that.questionDetail = res.data
+          // console.log(res.data)
+        }
+      })
+      that.$getRequest('/exam/reviewed/get/teacher/progress?examinationPaperId=' + that.exam.id + '&questionIndex=' + row.questionIndex).then(res => {
+        if (res.data) {
+          that.examiners = res.data
+          that.examiners.forEach((examiner, index) => {
+            that.value.push(examiner.teacherAccount)
+          })
+          console.log("ttt", that.value)
+          that.originalValue = that.value
+        }
       })
       this.tableData.map((item) => {
         if (row.qid != item.qid) {
@@ -595,24 +647,16 @@ export default {
     },
     drawEcharts(examiners) {
       //绘制趋势echarts
-      console.log(examiners)
+      console.log(this.examiners)
       let examiner_names = []
       let examiner_progress = []
-      let series = [{
-        name: '',
-        type: '',
-        tooltip: {
-          valueFormatter: function (value) {
-            return value + ' 份';
-          }
-        },
-        data: []
-      }]
+      let series = []
+      let total = []
       for (let i = 0; i < this.examiners.length; i++) {
-        examiner_names[i] = this.examiners[i].name
-        examiner_progress[i] = this.examiners[i].progress
+        examiner_names[i] = this.examiners[i].teacherName
+        examiner_progress[i] = this.examiners[i].reviewedTotalPerHour.slice(this.examiners[i].reviewedTotalPerHour.length - 5, this.examiners[i].reviewedTotalPerHour.length)
         series.push({
-          name: examiners[i].name,
+          name: examiners[i],
           type: 'bar',
           tooltip: {
             valueFormatter: function (value) {
@@ -622,7 +666,25 @@ export default {
           data: examiner_progress[i]
         })
       }
-
+      console.log(series)
+      console.log(examiners)
+      for (let i = 0; i < examiner_progress[0].length; i++) {
+        total[i] = 0
+        for (let j = 0; j < examiner_progress.length; j++) {
+          total[i] += examiner_progress[j][i]
+        }
+      }
+      series.push({
+        name: '总计',
+        type: 'line',
+        tooltip: {
+          valueFormatter: function (value) {
+            return value + ' 份';
+          }
+        },
+        data: total
+      })
+      // console.log(series)
       let option = {
         tooltip: {
           trigger: 'axis',
@@ -642,11 +704,12 @@ export default {
           }
         },
         legend: {
-          data: examiner_names
+          data: examiners
         },
         xAxis: [
           {
             type: 'category',
+            name: '时刻',
             data: [new Date().getHours() - 4, new Date().getHours() - 3, new Date().getHours() - 2, new Date().getHours() - 1, new Date().getHours()],
             axisPointer: {
               type: 'shadow'
@@ -658,91 +721,107 @@ export default {
             type: 'value',
             name: '批阅份数',
             min: 0,
-            max: 250,
-            interval: 50,
+            max: total[total.length - 1] + 5,
+            // interval: 50,
             axisLabel: {
               formatter: '{value}'
             }
           }
-          /*,
-          {
-            type: 'value',
-            name: 'Temperature',
-            min: 0,
-            max: 25,
-            interval: 5,
-            axisLabel: {
-              formatter: '{value} °C'
-            }
-          }
-          */
         ],
-        /*series: [
-          {
-            name: 'Evaporation',
-            type: 'bar',
-            tooltip: {
-              valueFormatter: function (value) {
-                return value + ' 份';
-              }
-            },
-            data: [
-              2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3
-            ]
-          },
-          {
-            name: 'Precipitation',
-            type: 'bar',
-            tooltip: {
-              valueFormatter: function (value) {
-                return value + ' ml';
-              }
-            },
-            data: [
-              2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3
-            ]
-          },
-          {
-            name: 'Temperature',
-            type: 'line',
-            yAxisIndex: 0,
-            tooltip: {
-              valueFormatter: function (value) {
-                return value + ' °C';
-              }
-            },
-            data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-          }
-        ]*/
+        series: series
       };
       let chartId = 'tiger-' + arguments[2] + '-trend-index' + arguments[1];
       this.$nextTick(() => {
         let myChart = this.$echarts.init(document.getElementById('progress1'));
         myChart.setOption(option);
-        myChart.setSeries(series);
         myChart.resize();
       });
     },
     editExaminer() {
+      console.log('editExaminer')
+      console.log("originalValue", this.originalValue.indexOf("000004"))
+      console.log(this.value)
       this.dialogFormVisible = false
-      this.thisExaminers = this.value
-      console.log(this.thisExaminers)
       let that = this
+      let teacherAccount = []
+      this.value.forEach(each => {
+        if (that.originalValue.indexOf(each) === -1) {
+          teacherAccount[teacherAccount.length] = each
+        }
+      })
+      console.log("teacherAccount", teacherAccount)
+      if (teacherAccount) {
+        teacherAccount.forEach(each => {
+          that.$postRequest('/exam/reviewed/set/teacher?examinationPaperId=' + this.exam.id + '&questionIndex=' + this.questionDetail.id + "&teacherAccount=" + each + '').then(res => {
+            if (res) {
+              console.log(res)
+            }
+          })
+        })
+      }
+      window.location.reload()
     }
+  },
+  created() {
+    let that = this
+    this.exam = eval('(' + this.$route.query.obj + ')')
+    this.$getRequest('/exam/examinationPaper/info/' + this.exam.id).then(res => {
+      // console.log(res)
+      if (res.data) {
+        that.exam = res.data
+        that.$nextTick(() => {
+          that.exam.section = that.exam.section.split(',')
+          // console.log(that.exam.section.length)
+        })
+      }
+    })
+
   },
   mounted() {
     let that = this
-    console.log(this.$route.query.obj)
-    this.exam = eval('(' + this.$route.query.obj + ')')
-    console.log("ooo", this.exam)
-    this.section = this.exam.section.split(',')
-    // this.question = this.exam.question.split(',')
+    this.$getRequest('/exam/reviewed/get/question?examinationPaperId=' + this.exam.id).then(res => {
+      if (res.data) {
+        that.tableData = res.data
+        // console.log(res.data)
+      }
+      // console.log("uuu", that.tableData)
+    })
+    let progress = []
+    this.$getRequest('/exam/reviewed/get/question/progress?examinationPaperId=' + this.exam.id).then(res => {
+      if (res.data) {
+        progress = res.data
+        for (let i = 0; i < that.tableData.length; i++) {
+          that.tableData[i].progress = progress[i]
+        }
+      }
+    })
+    this.$getRequest('/exam/reviewed/get/paper/progress?examinationPaperId=' + this.exam.id).then(res => {
+      if (res.data) {
+        that.progress = res.data
+      }
+    })
+    const data = []
+    let teachers = []
+    this.$postRequest('/user/teacher/list', {}).then(res => {
+      if (res.data) {
+        teachers = res.data.data
+        teachers.forEach(teacher => {
+          data.push({
+            label: teacher.name,
+            key: teacher.account,
+          });
+        });
+        that.data = data
+        // console.log(that.data)
+      }
+    })
   }
 }
 </script>
 
 <style scoped>
 .exam_info {
+  width: 600px;
   display: flex;
   flex-direction: row;
   margin-bottom: 2%;
@@ -766,5 +845,24 @@ export default {
   table-layout: fixed;
   border-collapse: separate;
   width: 98%;
+}
+
+:deep(.el-transfer__buttons) {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0 5px;
+}
+
+:deep(.el-transfer) {
+  font-size: var(--el-font-size-base);
+  height: 230px;
+}
+
+:deep(.el-transfer-panel__body) {
+  height: 190px;
+}
+
+:deep(.element.style) {
+  display: none;
 }
 </style>
