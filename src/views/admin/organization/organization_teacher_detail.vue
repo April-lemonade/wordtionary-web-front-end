@@ -18,7 +18,7 @@
             工号
         </div>
          <div style="width:100%;text-align:left">
-           191001201
+           {{info.account}}
         </div>
         </div>
          <div style="display:flex;jutify-content:start;width:80%;flex-wrap:wrap;height:50px">
@@ -30,7 +30,7 @@
             姓名
         </div>
          <div style="width:100%;text-align:left">
-           肖宇
+         {{info.name}}
         </div>
         </div>
            <div style="display:flex;jutify-content:start;width:80%;flex-wrap:wrap;height:50px">
@@ -42,7 +42,7 @@
             学院
         </div>
          <div style="width:100%;text-align:left">
-           工商管理学院
+          {{info.faculty}}
         </div>
         </div>
             <div style="display:flex;jutify-content:start;width:80%;flex-wrap:wrap;height:50px">
@@ -54,7 +54,7 @@
             授课科目
         </div>
          <div style="width:100%;text-align:left">
-           人力资源管理
+         
         </div>
         </div>
 </div>
@@ -95,6 +95,8 @@
 export default {
     data(){
         return{
+          account:'',
+          info:[],
              tableData:[
                 {
                     class:"(2021-2022-2)-CST043-1",
@@ -118,6 +120,18 @@ export default {
                
             ]
         }
+    },
+    created(){
+      let that=this
+      this.account=this.$route.query.id
+      this.$getRequest('/user/teacher/info?account=000001').then(res=>{
+        if(res){
+          that.info=res.data
+
+        }
+      })
+      console.log(this.account)
+
     }
 
 }
