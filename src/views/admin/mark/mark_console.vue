@@ -35,7 +35,7 @@
                style="position: absolute;top:0;right:0;transform: rotate(270deg);width: 10%"/>
         </div>
         <!--        <div id="progress" style="width:100%;height:300px "></div>-->
-        <el-scrollbar height="200px">
+        <el-scrollbar height="200px" v-cloak>
           <div style="display: flex;flex-direction: row;width: 100%">
             <div>总进度：</div>
             <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
@@ -252,344 +252,7 @@ export default {
       progress: [],
       section: [],
       question: [],
-      tableData: [
-        {
-          qid: '1.1',
-          time: '2022.2.24 16:00',
-          progress: 59,
-          description: '人生观的核心是_____。',
-          type: '填空题',
-          score: 2,
-          ans: '人生价值',
-          updater: '陈浩',
-          updateTime: '2022/2/10',
-          difficulty: 0.8,
-          point1: '价值观',
-          point2: '人生观的核心',
-          useCount: 1,
-          examiners: [
-            {
-              id: 0,
-              name: '赵国庆',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }, {
-              id: 1,
-              name: '王金材',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }
-          ],
-        },
-        {
-          qid: '1.2',
-          time: '2022.2.24 16:00',
-          progress: 56,
-          description: '人生观的核心是_____。',
-          type: '填空题',
-          score: 2,
-          ans: '人生价值',
-          updater: '陈浩',
-          updateTime: '2022/2/10',
-          difficulty: 0.8,
-          point1: '价值观',
-          point2: '人生观的核心',
-          useCount: 1,
-          examiners: [
-            {
-              id: 0,
-              name: '赵国庆',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }, {
-              id: 1,
-              name: '王金材',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }
-          ],
-        },
-        {
-          qid: '1.3',
-          time: '2022.2.24 16:00',
-          progress: 56,
-          description: '人生观的核心是_____。',
-          type: '填空题',
-          score: 2,
-          ans: '人生价值',
-          updater: '陈浩',
-          updateTime: '2022/2/10',
-          difficulty: 0.8,
-          point1: '价值观',
-          point2: '人生观的核心',
-          useCount: 1,
-          examiners: [
-            {
-              id: 0,
-              name: '赵国庆',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }, {
-              id: 1,
-              name: '王金材',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }
-          ],
-        },
-        {
-          qid: '1.4',
-          time: '2022.2.24 16:00',
-          progress: 56,
-          description: '人生观的核心是_____。',
-          type: '填空题',
-          score: 2,
-          ans: '人生价值',
-          updater: '陈浩',
-          updateTime: '2022/2/10',
-          difficulty: 0.8,
-          point1: '价值观',
-          point2: '人生观的核心',
-          useCount: 1,
-          examiners: [
-            {
-              id: 0,
-              name: '赵国庆',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }, {
-              id: 1,
-              name: '王金材',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }
-          ],
-        },
-        {
-          qid: '1.5',
-          time: '2022.2.24 16:00',
-          progress: 56,
-          description: '人生观的核心是_____。',
-          type: '填空题',
-          score: 2,
-          ans: '人生价值',
-          updater: '陈浩',
-          updateTime: '2022/2/10',
-          difficulty: 0.8,
-          point1: '价值观',
-          point2: '人生观的核心',
-          useCount: 1,
-          examiners: [
-            {
-              id: 0,
-              name: '赵国庆',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }, {
-              id: 1,
-              name: '王金材',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }
-          ],
-        },
-        {
-          qid: '1.6',
-          time: '2022.2.24 16:00',
-          progress: 56,
-          description: '人生观的核心是_____。',
-          type: '填空题',
-          score: 2,
-          ans: '人生价值',
-          updater: '陈浩',
-          updateTime: '2022/2/10',
-          difficulty: 0.8,
-          point1: '价值观',
-          point2: '人生观的核心',
-          useCount: 1,
-          examiners: [
-            {
-              id: 0,
-              name: '赵国庆',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }, {
-              id: 1,
-              name: '王金材',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }
-          ],
-        },
-        {
-          qid: '1.7',
-          time: '2022.2.24 16:00',
-          progress: 56,
-          description: '人生观的核心是_____。',
-          type: '填空题',
-          score: 2,
-          ans: '人生价值',
-          updater: '陈浩',
-          updateTime: '2022/2/10',
-          difficulty: 0.8,
-          point1: '价值观',
-          point2: '人生观的核心',
-          useCount: 1,
-          examiners: [
-            {
-              id: 0,
-              name: '赵国庆',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }, {
-              id: 1,
-              name: '王金材',
-              speed: 15,
-              count: 696,
-              allQuestions: ['1.1', '1.3'],
-              allProgress: 25,
-              progresses: [{
-                qid: '1.1',
-                progress: 25
-              }, {
-                qid: '1.3',
-                progress: 25
-              }],
-              time: '2022.2.14 16:00'
-            }
-          ],
-        },
-      ],
+      tableData: [],
       examiners: [{
         name: '赵国庆',
         progress: [0, 20, 50, 76, 98]
@@ -765,7 +428,7 @@ export default {
   created() {
     let that = this
     this.exam = eval('(' + this.$route.query.obj + ')')
-    this.$nextTick(()=>{
+    this.$nextTick(() => {
       this.$getRequest('/exam/examinationPaper/info/' + this.exam.id).then(res => {
         // console.log(res)
         if (res.data) {
@@ -780,7 +443,7 @@ export default {
   },
   mounted() {
     let that = this
-    this.$nextTick(()=>{
+    this.$nextTick(() => {
       this.$getRequest('/exam/reviewed/get/question?examinationPaperId=' + this.exam.id).then(res => {
         if (res.data) {
           that.tableData = res.data
@@ -868,6 +531,10 @@ export default {
 }
 
 :deep(.element.style) {
+  display: none;
+}
+
+[v-cloak] {
   display: none;
 }
 </style>
