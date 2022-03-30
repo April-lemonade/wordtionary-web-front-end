@@ -12,6 +12,7 @@ import {putRequest} from './utils/api';
 import {deleteRequest} from './utils/api';
 import {getRequest} from './utils/api';
 
+
 let app = createApp(App);
 app.config.globalProperties.$axios = axios
 app.config.globalProperties.$echarts = echarts;

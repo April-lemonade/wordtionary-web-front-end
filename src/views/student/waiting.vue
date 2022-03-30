@@ -35,7 +35,8 @@
               <div> 2、保持座位前的桌面干净，不要有与考试无关的内容。</div>
               <div>3、考试时间截止或答题时间结束，如果处于答题页面，将自动提交试卷。</div>
             </div>
-            <el-button type="primary" color="#84cecd" round style="font-size: 18px;padding: 5px" @click="startExam">我已仔细阅读考试说明，进入考试
+            <el-button type="primary" color="#84cecd" round style="font-size: 18px;padding: 5px" @click="startExam">
+              我已仔细阅读考试说明，进入考试
             </el-button>
           </div>
         </div>
@@ -56,12 +57,14 @@ export default {
     let that = this
     this.exam = eval('(' + this.$route.query.obj + ')')
     console.log(this.exam)
+    this.stuAccount = eval('(' + this.$route.query.stuAccount + ')')
   },
-  methods:{
-    startExam(){
+  methods: {
+    startExam() {
+      let that = this
       let obj = JSON.stringify(this.exam)
       // console.log(this.exam)
-      this.$router.push({path: '/questions', query: {obj: obj}})
+      this.$router.push({path: '/questions', query: {obj: obj, stuAccount: that.stuAccount}})
     }
   },
   mounted() {
@@ -71,7 +74,8 @@ export default {
       exam: {
         content: '2021-2022第2学期线性代数期末考试',
         time: '2022/1/1 13:40'
-      }
+      },
+      stuAccount: ''
     }
   }
 }

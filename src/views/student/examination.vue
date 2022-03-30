@@ -88,11 +88,12 @@ export default {
   },
   methods: {
     show_detail(exam) {
+      let that = this
       if (exam.status === 4) {
         console.log(exam.paperId)
         let obj = JSON.stringify(exam)
         // console.log(this.exam)
-        this.$router.push({path: '/waiting', query: {obj: obj}})
+        this.$router.push({path: '/waiting', query: {obj: obj,stuAccount:that.studentAccount}})
       }
     },
     handleCheckChange(data, checked, indeterminate) {

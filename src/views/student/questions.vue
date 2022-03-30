@@ -23,56 +23,66 @@
         </div>
       </el-dialog>
       <el-aside :style="{'width': (expand ? '175px':'75px')}" class="aside">
-        <div style="margin-top: 5%;height: fit-content" @click="expand = !expand">
-          <el-icon v-if="!expand">
-            <arrow-right-bold/>
-          </el-icon>
-          <div style="display: flex;flex-direction: row;align-items: center;justify-content: center" v-if="expand">
-            <el-icon>
-              <arrow-left-bold/>
+        <el-scrollbar style="width: 100%">
+          <div style="margin-top: 5%;height: fit-content;display: flex;align-items: center;justify-content: center"
+               @click="expand = !expand">
+            <el-icon v-if="!expand">
+              <arrow-right-bold/>
             </el-icon>
-            <div>收缩</div>
-          </div>
-        </div>
-        <div v-if="!expand" style="display:flex;width:100%;height:100px;margin-top:10px;flex-direction: column">
-          <div v-for="(question,index1) in questions" style="display: flex;align-items: center;flex-direction: column">
-            <div
-                style="width: 40px;height: 40px;border-style: solid;border-width: 1px;border-radius: 40px;align-items: center;display: flex;justify-content: center;border-color: #a7a7a7">
-              <img src="../../assets/testpaper_icon.svg"/>
+            <div style="display: flex;flex-direction: row;align-items: center;justify-content: center" v-if="expand">
+              <el-icon>
+                <arrow-left-bold/>
+              </el-icon>
+              <div>收缩</div>
             </div>
-            <div>第{{ question.section }}节</div>
-            <div v-for="(each,index2) in question.question">
-              <div :class="(currentQuestion === index2 && currentSection=== index1) ?'active':'index'"
-                   @click="changeQuestion(index1,index2)">
-                {{ index2 + 1 }}
+          </div>
+          <div v-if="!expand" style="display:flex;width:100%;height:100px;margin-top:10px;flex-direction: column">
+            <div v-for="(question,index1) in questions"
+                 style="display: flex;align-items: center;flex-direction: column">
+              <div
+                  style="width: 40px;height: 40px;border-style: solid;border-width: 1px;border-radius: 40px;align-items: center;display: flex;justify-content: center;border-color: #a7a7a7;margin-top: 20%">
+                <img src="../../assets/testpaper_icon.svg"/>
+              </div>
+              <div>第{{ question.section }}节</div>
+              <div v-for="(each,index2) in question.question">
+                <div :class="(currentQuestion === index2 && currentSection=== index1) ?'active':'index'"
+                     @click="changeQuestion(index1,index2)">
+                  {{ index2 + 1 }}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-        <div v-if="expand" style="display:flex;width:100%;height:100px;margin-top:10px;flex-direction: column">
-          <div v-for="question in questions" style="display: flex;align-items: center;flex-direction: column">
-            <div
-                style="width: 40px;height: 40px;border-style: solid;border-width: 1px;border-radius: 40px;align-items: center;display: flex;justify-content: center;border-color: #a7a7a7">
-              <img src="../../assets/testpaper_icon.svg"/>
-            </div>
-            <div>第{{ question.section }}节</div>
-            <div style="display: flex;flex-direction: row;flex-wrap: wrap;width: 100%">
-              <div v-for="(each,index) in question.question">
-                <div :class="current === index?'active':'index'">{{ index + 1 }}</div>
+          <div v-if="expand" style="display:flex;width:100%;height:100px;margin-top:10px;flex-direction: column">
+            <div v-for="(question,index1) in questions"
+                 style="display: flex;align-items: center;flex-direction: column">
+              <div
+                  style="width: 40px;height: 40px;border-style: solid;border-width: 1px;border-radius: 40px;align-items: center;display: flex;justify-content: center;border-color: #a7a7a7;margin-top: 20%">
+                <img src="../../assets/testpaper_icon.svg"/>
+              </div>
+              <div>第{{ question.section }}节</div>
+              <div style="display: flex;flex-direction: row;flex-wrap: wrap;width: 100%">
+                <div v-for="(each,index2) in question.question">
+                  <div :class="(currentQuestion === index2 && currentSection=== index1)?'active':'index'"
+                       @click="changeQuestion(index1,index2)">
+                    {{ index2 + 1 }}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </el-scrollbar>
       </el-aside>
       <el-main style="margin:0;padding:0;height: calc(100vh - 70px)">
         <el-scrollbar>
           <div class="main">
             <div style="background-color: white;padding: 50px">
               <div style="width: 100%;display: flex;flex-direction: row;justify-content: space-between">
-                <div v-if="questions.length!==0&&questions[currentSection].question[currentQuestion].type===1"
-                     style="width: 42px;height: 40px;background-color: #d7d7d7;">
-                  <img style="width: 40px;height: 38px;" src="../../assets/select_icon.png">
-                </div>
+                <img v-if="questions.length!==0&&questions[currentSection].question[currentQuestion].type===1"
+                     style="width: 40px;height: 38px;" src="../../assets/select_icon.png">
+                <img v-if="questions.length!==0&&questions[currentSection].question[currentQuestion].type===2"
+                     style="width: 40px;height: 38px;" src="../../assets/judge_icon.png">
+                <img v-if="questions.length!==0&&questions[currentSection].question[currentQuestion].type===3"
+                     style="width: 40px;height: 38px;" src="../../assets/fill_icon.png">
                 <div v-if="questions.length!==0&&questions[currentSection].section_score">
                   分值：{{ questions[currentSection].section_score }}
                 </div>
@@ -80,32 +90,49 @@
               <div>
                 {{ questions.length === 0 ? undefined : questions[currentSection].question[currentQuestion].content }}
               </div>
-              <div class="ans"
-                   v-if="questions.length!==0"
-                   @click="stuAns[currentSection][currentQuestion]='A'">
-                <div :class="stuAns[currentSection][currentQuestion]==='A'?'active1':'select'">A</div>
-                <div>
-                  {{ questions.length === 0 ? undefined : questions[currentSection].question[currentQuestion].a }}
+              <div v-if="questions.length!==0&&questions[currentSection].question[currentQuestion].type===1">
+                <div class="ans" v-if="questions.length!==0" @click="stuAns[currentSection][currentQuestion]='A'">
+                  <div :class="stuAns[currentSection][currentQuestion]==='A'?'active1':'select'">A</div>
+                  <div>
+                    {{ questions.length === 0 ? undefined : questions[currentSection].question[currentQuestion].a }}
+                  </div>
+                </div>
+                <div class="ans" v-if="questions.length!==0" @click="stuAns[currentSection][currentQuestion]='B'">
+                  <div :class="stuAns[currentSection][currentQuestion]==='B'?'active1':'select'">B</div>
+                  <div>
+                    {{ questions.length === 0 ? undefined : questions[currentSection].question[currentQuestion].b }}
+                  </div>
+                </div>
+                <div class="ans" v-if="questions.length!==0" @click="stuAns[currentSection][currentQuestion]='C'">
+                  <div :class="stuAns[currentSection][currentQuestion]==='C'?'active1':'select'">C</div>
+                  <div>
+                    {{ questions.length === 0 ? undefined : questions[currentSection].question[currentQuestion].c }}
+                  </div>
+                </div>
+                <div class="ans" v-if="questions.length!==0" @click="stuAns[currentSection][currentQuestion]='D'">
+                  <div :class="stuAns[currentSection][currentQuestion]==='D'?'active1':'select'">D</div>
+                  <div>
+                    {{ questions.length === 0 ? undefined : questions[currentSection].question[currentQuestion].d }}
+                  </div>
                 </div>
               </div>
-              <div class="ans" v-if="questions.length!==0"
-                   @click="stuAns[currentSection][currentQuestion]='B'">
-                <div :class="stuAns[currentSection][currentQuestion]==='B'?'active1':'select'">B</div>
-                <div>
-                  {{ questions.length === 0 ? undefined : questions[currentSection].question[currentQuestion].b }}
+              <div v-if="questions.length!==0&&questions[currentSection].question[currentQuestion].type===2">
+                <div class="ans" v-if="questions.length!==0" @click="stuAns[currentSection][currentQuestion]='T'">
+                  <div :class="stuAns[currentSection][currentQuestion]==='T'?'active1':'select'">A</div>
+                  <div>正确</div>
+                </div>
+                <div class="ans" v-if="questions.length!==0" @click="stuAns[currentSection][currentQuestion]='F'">
+                  <div :class="stuAns[currentSection][currentQuestion]==='F'?'active1':'select'">B</div>
+                  <div>错误</div>
                 </div>
               </div>
-              <div class="ans" v-if="questions.length!==0" @click="stuAns[currentSection][currentQuestion]='C'">
-                <div :class="stuAns[currentSection][currentQuestion]==='C'?'active1':'select'">C</div>
-                <div>
-                  {{ questions.length === 0 ? undefined : questions[currentSection].question[currentQuestion].c }}
-                </div>
-              </div>
-              <div class="ans" v-if="questions.length!==0" @click="stuAns[currentSection][currentQuestion]='D'">
-                <div :class="stuAns[currentSection][currentQuestion]==='D'?'active1':'select'">D</div>
-                <div>
-                  {{ questions.length === 0 ? undefined : questions[currentSection].question[currentQuestion].d }}
-                </div>
+              <div v-if="questions.length!==0&&questions[currentSection].question[currentQuestion].type===3">
+                <tinymce-editor ref="editor" :value="stuAns[currentSection][currentQuestion]"
+                                v-model="stuAns[currentSection][currentQuestion]"
+                                :disabled="disabled" @input="myfn"
+                                :base-url="baseUrl" :language="language"
+                                :skin="skin" style="margin-top: 5%">
+                </tinymce-editor>
               </div>
               <div style="display: flex;flex-direction: row;margin-top: 3%">
                 <el-button v-if="currentSection!==0||currentQuestion!==0" @click="previous">上一题</el-button>
@@ -124,13 +151,28 @@
 
 <script>
 import {ArrowRightBold, ArrowLeftBold} from '@element-plus/icons-vue'
+import TinymceEditor from '../../components/tinymce-editor'
+import "tinymce/icons/default/icons"
+import "tinymce/models/dom/model"
 
 export default {
   name: "questions",
-  components: {ArrowRightBold, ArrowLeftBold},
+  components: {ArrowRightBold, ArrowLeftBold, TinymceEditor},
+  init: {
+    selector: "#tinymce", //tinymce的id
+    language_url: "/tinymce/langs/zh_CN.js",
+    language: "zh_CN",
+    skin_url: "/tinymce/skins/ui/oxide", //编辑器需要一个skin才能正常工作，所以要设置一个skin_url指向之前复制出来的skin文件
+  },
   data() {
     return {
+      msg: 'Welcome to Use Tinymce Editor-liubing.me',
+      disabled: false,
+      baseUrl: process.env.NODE_ENV === 'production' ? '/testtinymce' : '',
+      language: 'zh_CN',
+      skin: 'oxide',
       expand: false,
+      stuAccount: '',
       time: '',
       flag: false,
       endTime: '2022-03-30 12:51:00',
@@ -142,19 +184,44 @@ export default {
       questions: [],
       stuAns: [],
       currentQuestion: 0,
-      currentSection: 0
+      currentSection: 0,
+      value: ''
     }
   },
   created() {
     let that = this
     this.exam = eval('(' + this.$route.query.obj + ')')
     console.log(this.exam)
+    this.stuAccount = eval('(' + this.$route.query.stuAccount + ')')
   },
   methods: {
+    myfn(value) {
+      console.log("Scsd", value)
+      this.stuAns[this.currentSection][this.currentQuestion] = value
+    },
+    onClick(e, editor) {
+      console.log('Element clicked')
+      console.log(e)
+      console.log(editor)
+    },
+    // 清空内容
+    clear() {
+      this.$refs.editor.clear()
+    },
     submit() {
       this.dialogVisible = false
       console.log(this.stuAns)
       let obj = JSON.stringify(this.exam)
+      let finalAns = []
+      this.stuAns.forEach(each => {
+        each.forEach(every => {
+          finalAns[finalAns.length] = every
+        })
+      })
+      console.log(this.stuAns)
+      this.$postRequest('/exam/studentAnswer/putPaper?StudentAccount=' + this.stuAccount + '&answerSituation=' + finalAns + '&examId=' + this.exam.paperId + '&teachingClassId=' + this.exam.teachingClassId).then(res => {
+        console.log(res)
+      })
       this.$router.push({path: '/end', query: {obj: obj}})
     },
     previous() {
@@ -208,7 +275,7 @@ export default {
         this.flag = true
         this.$emit('time-end')
       }
-      this.time = `${h}小时${m}分${s}秒`     // 需要修改时间样式的话 ，比如需要什么30分钟倒计时，就只保留分和秒
+      this.time = `${h}小时${m}分${s}秒`
     },
     formate(time) {
       if (time >= 10) {
@@ -218,7 +285,6 @@ export default {
       }
     }
   },
-
   mounted() {
     let that = this
     this.exam = eval('(' + this.$route.query.obj + ')')
