@@ -45,7 +45,7 @@
           </div>
           <div v-for="data in progress.reviewedQuestionProgressList">
             <div style="display: flex;flex-direction: row">
-              <div style="width: 10%">{{ data.questionId }}</div>
+              <div style="width: 10%">{{ data.questionIndex }}</div>
               <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
                            :stroke-width="15"
                            :percentage="data.reviewedProgress * 100"
@@ -80,7 +80,7 @@
                    v-if="dialogFormVisible === false">
                 <div
                     style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
-                  <div style="font-weight: bold">{{ questionDetail.id }} &nbsp; {{ questionDetail.content }}</div>
+                  <div style="font-weight: bold">{{ props.row.questionIndex }} &nbsp; {{ questionDetail.content }}</div>
                   <div style="border-style: solid;border-width: 2px;border-radius: 5px;font-weight: bold">
                     <div v-if="questionDetail.type === 1">选择题</div>
                     <div v-if="questionDetail.type === 2">判断题</div>
@@ -132,7 +132,7 @@
 
           </template>
         </el-table-column>
-        <el-table-column label="题号" prop="questionId"/>
+        <el-table-column label="题号" prop="questionIndex"/>
         <el-table-column label="阅卷人">
           <template #default="scope">
             <div style="display: flex;flex-direction: row">

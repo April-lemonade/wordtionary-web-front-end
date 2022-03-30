@@ -58,7 +58,7 @@
               <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 2%">
                 <div
                     style="display: flex;flex-direction: row;font-size: 13px;justify-content: space-between;width: 100%;margin-bottom: 5%">
-                  <div style="font-weight: bold">{{ props.row.info.questionId }} &nbsp; {{
+                  <div style="font-weight: bold">{{ props.row.info.questionIndex }} &nbsp; {{
                       props.row.detail.content
                     }}
                   </div>
@@ -96,7 +96,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="题号" prop="info.questionId"/>
+        <el-table-column label="题号" prop="info.questionIndex"/>
         <el-table-column label="阅卷人">
           <template #default="scope">
             <div style="display: flex;flex-direction: row">

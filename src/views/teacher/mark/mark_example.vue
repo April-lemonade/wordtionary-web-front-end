@@ -4,13 +4,13 @@
       <el-button @click="this.$router.go (-2)">退出</el-button>
       <div
           style="justify-content: center;font-size: 20px;font-weight: bold;display: flex;flex-direction: row;margin-bottom: 2%">
-        {{ exam.content }}&nbsp;{{ row.detail.id }}题&nbsp;
+        {{ exam.content }}&nbsp;{{ row.info.questionIndex }}题&nbsp;
         <div style="color: red">样卷</div>
         批阅
       </div>
       <div
           style="display: flex;flex-direction: row;font-weight: bold;margin-top: 2%;font-size: 20px;margin-bottom: 2%">
-        {{ row.detail.id }}：
+        {{ row.info.questionIndex }}.
         <div v-html="row.detail.content"></div>
       </div>
       <div style="color: #a7a7a7;font-weight: bold">学生答案</div>
