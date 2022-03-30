@@ -712,107 +712,110 @@ export default {
     let that = this
     this.exam = eval('(' + this.$route.query.obj + ')')
     console.log(this.exam)
-    this.$getRequest('/exam/reviewed/teacher/get/question?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
-      if (res.data) {
-        res.data.forEach(each => {
-          that.$getRequest('/exam/question/info/' + each.questionId).then(res => {
-            let detail = res.data
-            this.$getRequest('/exam/reviewed/teacher/get/question/progress?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
-              if (res.data) {
-                that.progress = res.data
-                res.data.reviewedQuestionProgressList.forEach(every => {
-                  that.questions.push({
-                    info: each,
-                    detail: detail,
-                    progress: every
+    this.$nextTick(()=>{
+      that.$getRequest('/exam/reviewed/teacher/get/question?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
+        if (res.data) {
+          res.data.forEach(each => {
+            that.$getRequest('/exam/question/info/' + each.questionId).then(res => {
+              let detail = res.data
+              this.$getRequest('/exam/reviewed/teacher/get/question/progress?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
+                if (res.data) {
+                  that.progress = res.data
+                  res.data.reviewedQuestionProgressList.forEach(every => {
+                    that.questions.push({
+                      info: each,
+                      detail: detail,
+                      progress: every
+                    })
                   })
-                })
-              }
-              console.log(that.questions)
+                }
+                console.log(that.questions)
+              })
             })
           })
-        })
-      }
-    })
-    let series = []
-    let name = []
-    let max = 0
-    this.$getRequest('/exam/reviewed/teacher/get/paper/progress?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
-      if (res.data) {
-        console.log(res.data)
-        res.data.questionProgressList.forEach(each => {
-          name[name.length] = each.questionIndex + ''
+        }
+      })
+      let series = []
+      let name = []
+      let max = 0
+      this.$getRequest('/exam/reviewed/teacher/get/paper/progress?examinationPaperId=' + this.exam.paperId + '&teacherAccount=' + this.teacherAccount).then(res => {
+        if (res.data) {
+          console.log(res.data)
+          res.data.questionProgressList.forEach(each => {
+            name[name.length] = each.questionIndex + ''
+            series.push({
+              name: each.questionIndex + '',
+              type: 'bar',
+              tooltip: {
+                valueFormatter: function (value) {
+                  return value + ' 份';
+                }
+              },
+              data: each.questionProgress.slice(each.questionProgress.length - 5, each.questionProgress.length)
+            })
+          })
           series.push({
-            name: each.questionIndex + '',
-            type: 'bar',
+            name: '总计',
+            type: 'line',
             tooltip: {
               valueFormatter: function (value) {
                 return value + ' 份';
               }
             },
-            data: each.questionProgress.slice(each.questionProgress.length - 5, each.questionProgress.length)
+            data: res.data.totalProgress.slice(res.data.totalProgress.length - 5, res.data.totalProgress.length)
           })
-        })
-        series.push({
-          name: '总计',
-          type: 'line',
-          tooltip: {
-            valueFormatter: function (value) {
-              return value + ' 份';
-            }
-          },
-          data: res.data.totalProgress.slice(res.data.totalProgress.length - 5, res.data.totalProgress.length)
-        })
-        max = res.data.totalProgress[res.data.totalProgress.length - 1] + 5
-        /*        console.log(max)
-                console.log(series)
-                console.log(name)*/
-        let option = {
-          tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-              type: 'cross',
-              crossStyle: {
-                color: '#999'
-              }
-            }
-          },
-          toolbox: {
-            feature: {
-              dataView: {show: true, readOnly: false},
-              magicType: {show: true, type: ['line', 'bar']},
-              restore: {show: true},
-              saveAsImage: {show: true}
-            }
-          },
-          legend: {
-            data: name
-          },
-          xAxis: [
-            {
-              name: '时刻',
-              type: 'category',
-              data: [new Date().getHours() - 4, new Date().getHours() - 3, new Date().getHours() - 2, new Date().getHours() - 1, new Date().getHours()],
+          max = res.data.totalProgress[res.data.totalProgress.length - 1] + 5
+          /*        console.log(max)
+                  console.log(series)
+                  console.log(name)*/
+          let option = {
+            tooltip: {
+              trigger: 'axis',
               axisPointer: {
-                type: 'shadow'
+                type: 'cross',
+                crossStyle: {
+                  color: '#999'
+                }
               }
-            }
-          ],
-          yAxis: [
-            {
-              type: 'value',
-              name: '批阅份数',
-              min: 0,
-              max: max,
             },
-          ],
-          series: series
+            toolbox: {
+              feature: {
+                dataView: {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore: {show: true},
+                saveAsImage: {show: true}
+              }
+            },
+            legend: {
+              data: name
+            },
+            xAxis: [
+              {
+                name: '时刻',
+                type: 'category',
+                data: [new Date().getHours() - 4, new Date().getHours() - 3, new Date().getHours() - 2, new Date().getHours() - 1, new Date().getHours()],
+                axisPointer: {
+                  type: 'shadow'
+                }
+              }
+            ],
+            yAxis: [
+              {
+                type: 'value',
+                name: '批阅份数',
+                min: 0,
+                max: max,
+              },
+            ],
+            series: series
+          }
+          let myChart = this.$echarts.init(document.getElementById('progress'));
+          myChart.setOption(option);
+          myChart.resize();
         }
-        let myChart = this.$echarts.init(document.getElementById('progress'));
-        myChart.setOption(option);
-        myChart.resize();
-      }
+      })
     })
+
   }
 }
 </script>

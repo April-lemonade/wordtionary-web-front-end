@@ -35,7 +35,7 @@
                style="position: absolute;top:0;right:0;transform: rotate(270deg);width: 10%"/>
         </div>
         <!--        <div id="progress" style="width:100%;height:300px "></div>-->
-        <el-scrollbar height="200px" v-cloak>
+        <el-scrollbar height="200px" v-if="progress">
           <div style="display: flex;flex-direction: row;width: 100%">
             <div>总进度：</div>
             <el-progress style="margin-right: 3%;margin-top: 1%;margin-bottom:1%;width: 80%" :text-inside="true"
@@ -72,7 +72,7 @@
       <!--      <div>只展示未批改完的题目
               <el-switch v-model="onlying" active-color="rgba(19, 137, 116, 1)"></el-switch>
             </div>-->
-      <el-table ref="table" :data="tableData" style="width: 98%">
+      <el-table ref="table" :data="tableData" style="width: 98%" v-if="tableData">
         <el-table-column type="expand">
           <template #default="props">
             <div style="display: flex;flex-direction: row">
@@ -252,7 +252,57 @@ export default {
       progress: [],
       section: [],
       question: [],
-      tableData: [],
+      tableData: [
+        {
+          qid: '1.1',
+          exampleFinished: 0,
+          time: '2022.2.24 16:00',
+          progress: 59,
+          description: '人生观的核心是_____。',
+          type: '填空题',
+          score: 2,
+          ans: '人生价值',
+          updater: '陈浩',
+          updateTime: '2022/2/10',
+          difficulty: 0.8,
+          point1: '价值观',
+          point2: '人生观的核心',
+          useCount: 1,
+          examiners: [
+            {
+              id: 0,
+              name: '赵国庆',
+              speed: 15,
+              count: 696,
+              allQuestions: ['1.1', '1.3'],
+              allProgress: 25,
+              progresses: [{
+                qid: '1.1',
+                progress: 25
+              }, {
+                qid: '1.3',
+                progress: 25
+              }],
+              time: '2022.2.14 16:00'
+            }, {
+              id: 1,
+              name: '王金材',
+              speed: 15,
+              count: 696,
+              allQuestions: ['1.1', '1.3'],
+              allProgress: 25,
+              progresses: [{
+                qid: '1.1',
+                progress: 25
+              }, {
+                qid: '1.3',
+                progress: 25
+              }],
+              time: '2022.2.14 16:00'
+            }
+          ],
+        },
+      ],
       examiners: [{
         name: '赵国庆',
         progress: [0, 20, 50, 76, 98]
@@ -445,6 +495,11 @@ export default {
     let that = this
     this.$nextTick(() => {
       this.$getRequest('/exam/reviewed/get/question?examinationPaperId=' + this.exam.id).then(res => {
+        that.$getRequest('/exam/reviewed/get/paper/progress?examinationPaperId=' + this.exam.id).then(res => {
+          if (res.data) {
+            that.progress = res.data
+          }
+        })
         if (res.data) {
           that.tableData = res.data
           let progress = []
@@ -461,11 +516,7 @@ export default {
         // console.log("uuu", that.tableData)
       })
 
-      this.$getRequest('/exam/reviewed/get/paper/progress?examinationPaperId=' + this.exam.id).then(res => {
-        if (res.data) {
-          that.progress = res.data
-        }
-      })
+
       const data = []
       let teachers = []
       this.$postRequest('/user/teacher/list', {}).then(res => {

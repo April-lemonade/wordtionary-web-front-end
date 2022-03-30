@@ -21,6 +21,12 @@ const routes = [
 
   },
   {
+    path: '/end',
+    name: 'end',
+    component: () => import('../views/student/end.vue')
+
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
