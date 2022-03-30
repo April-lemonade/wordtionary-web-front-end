@@ -72,21 +72,21 @@ const routes = [
     component: () => import('../views/admin/index.vue'),
     children: [
       {
-        path:"questionset/addquestion",
-        component:()=> import("../views/admin/questionset/add_question.vue"),
-        name:"admin_questionset_addquestion"
+        path: "questionset/addquestion",
+        component: () => import("../views/admin/questionset/add_question.vue"),
+        name: "admin_questionset_addquestion"
 
       },
       {
-        path:'questionset/allquestion',
-        component:() => import('../views/admin/questionset/allquestion.vue'),
-        name:"admin_questionset_allquestion"
+        path: 'questionset/allquestion',
+        component: () => import('../views/admin/questionset/allquestion.vue'),
+        name: "admin_questionset_allquestion"
 
       },
       {
-        path:"questionset",
-        component:() => import('../views/admin/questionset/questionset.vue'),
-        name:"admin_questionset"
+        path: "questionset",
+        component: () => import('../views/admin/questionset/questionset.vue'),
+        name: "admin_questionset"
 
       },
       {
@@ -119,6 +119,11 @@ const routes = [
         path: 'examination/new',
         component: () => import('../views/admin/examination/NewExamination.vue'),
         name: 'admin_examination_new'
+      },
+      {
+        path: 'examination/preview',
+        component: () => import('../views/admin/examination/preview.vue'),
+        name: 'admin_examination_preview'
       },
       {
         path: 'organization/teacher',
@@ -185,7 +190,7 @@ const routes = [
       }, {
         path: 'examination',
         component: () => import('../views/teacher/examination.vue'),
-        name:'teacher_examination'
+        name: 'teacher_examination'
       }
 
     ]

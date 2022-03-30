@@ -23,8 +23,9 @@
         </div>
         <div style="color: #a7a7a7;font-weight: bold;margin-top: 2%">标准答案</div>
         <div
-            style="border-style: solid;border-width: 1px;border-color: #D7D7D7;border-radius: 5px;margin-top: 2%;padding: 2%">
-          {{ question.referenceAnswer }}
+            style="border-style: solid;border-width: 1px;border-color: #D7D7D7;border-radius: 5px;margin-top: 2%;padding: 2%"
+            v-html="question.referenceAnswer">
+
         </div>
         <div
             style="background-color: #F7F7F7;padding: 3%;justify-content:space-between;font-weight: bold;font-size: 15px;margin-top: 2%;display: flex;flex-direction: row">

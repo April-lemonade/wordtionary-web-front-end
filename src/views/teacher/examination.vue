@@ -29,7 +29,7 @@
         </div>-->
     <div style="width: 77%">
       <!--      <el-button type="primary" @click="goNew" style="margin-left:3%;margin-top: 3%">发布考试</el-button>-->
-      <div v-for="(exam,index) in exams" :key="exam.id" @click="show_detail(index)"
+      <div v-for="(exam,index) in exams" :key="exam.id"
            style="border-style: solid;border-width: 1px;border-color: #D7D7D7;margin: 3%;width: 80%;border-radius: 10px;display: flex;flex-direction: column;padding: 2%;">
         <div style="display: flex;flex-direction: row;justify-content: space-between;width: 100%;margin-bottom: 5%">
           <div>{{ exam.content }}</div>
@@ -49,12 +49,22 @@
                       {{ exam.status }}
                     </el-tag>-->
         </div>
-        <div style="display: flex;flex-direction: row;justify-content: space-between;width: 100%">
-          <div>{{ exam.courseName }}</div>
-          <div>|</div>
-          <div>{{ exam.facultyName }}</div>
-          <div>|</div>
-          <div>{{ exam.examTime }} - {{ exam.endTime }}</div>
+        <div
+            style="display: flex;flex-direction: row;justify-content: space-between;width: 100%;justify-content: space-between">
+          <div style="font-size: 12px">
+            {{ exam.course }}&nbsp;|&nbsp;{{ exam.facultyName }}&nbsp;|&nbsp;{{ exam.examTime }} - {{ exam.endTime }}
+          </div>
+          <div style="font-size: 14px;display: flex;flex-direction: row">
+            <el-button type="text" @click="preview(index)">查看试卷&nbsp;</el-button>
+            <div v-if="exam.status === 5" style="display: flex;flex-direction: row">
+              <div>|</div>
+              <el-button type="text" @click="show_detail(index)">&nbsp;批阅详情</el-button>
+            </div>
+            <div v-if="exam.status === 6" style="display: flex;flex-direction: row">
+              <div>|</div>
+              <el-button type="text">&nbsp;成绩详情</el-button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -127,7 +137,7 @@ export default {
     show_detail(data) {
       console.log(data)
       let obj = JSON.stringify(this.exams[data])
-      this.$router.push({path: '/admin/mark/mark_console', query: {obj: obj}})
+      this.$router.push({path: '/teacher/mark/mark_console', query: {obj: obj}})
     },
     handleCheckChange(data, checked, indeterminate) {
       let that = this

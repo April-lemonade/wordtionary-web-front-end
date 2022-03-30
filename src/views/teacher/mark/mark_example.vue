@@ -10,17 +10,18 @@
       </div>
       <div
           style="display: flex;flex-direction: row;font-weight: bold;margin-top: 2%;font-size: 20px;margin-bottom: 2%">
-        {{ row.detail.id }}：{{ row.detail.content }}
+        {{ row.detail.id }}：
+        <div v-html="row.detail.content"></div>
       </div>
       <div style="color: #a7a7a7;font-weight: bold">学生答案</div>
       <div
-          style="border-style: solid;border-width: 1px;border-color: #D7D7D7;border-radius: 5px;margin-top: 2%;padding: 2%">
-        {{ detail[current].studentAnswer }}
+          style="border-style: solid;border-width: 1px;border-color: #D7D7D7;border-radius: 5px;margin-top: 2%;padding: 2%"
+          v-html="detail[current].studentAnswer">
       </div>
       <div style="color: #a7a7a7;font-weight: bold;margin-top: 2%">标准答案</div>
       <div
-          style="border-style: solid;border-width: 1px;border-color: #D7D7D7;border-radius: 5px;margin-top: 2%;padding: 2%">
-        {{ row.detail.answer }}
+          style="border-style: solid;border-width: 1px;border-color: #D7D7D7;border-radius: 5px;margin-top: 2%;padding: 2%"
+          v-html="row.detail.answer">
       </div>
       <div
           style="background-color: #F7F7F7;padding: 3%;justify-content:space-between;font-weight: bold;font-size: 15px;margin-top: 2%;display: flex;flex-direction: row">

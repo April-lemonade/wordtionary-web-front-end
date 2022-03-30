@@ -4,7 +4,7 @@
         style="width:100%;height:70px;background:white;border-bottom:1px solid  #d7d7d7;box-sizing: border-box;align-items:center;display:flex;justify-content:space-between">
       <div
           style="display:flex;align-content:center;height:40px;align-items:center;margin-right:40px;width: 100%">
-        <el-icon style="margin-right: 3%">
+        <el-icon style="margin-right: 3%" @click="this.$router.go(-1)">
           <arrow-left-bold/>
         </el-icon>
         <img src="../../assets/testpaper_icon.svg" style="width:18px;height:20px;margin-right: 1%">
