@@ -584,7 +584,7 @@ export default {
         }
 
         if (this.step === 4) {
-          this.sectionScore[this.questions.length] = 0
+
           this.ruleForm.paper.push({
             questionCount: 0,
             questionScore: '0',
@@ -614,26 +614,27 @@ export default {
       })
       console.log('finalQuestions', finalQuestions)
       console.log('finalPoints', finalPoints)
-      console.log(this.sectionScore)
-      console.log(this.section)
+      console.log('sectionScore', this.sectionScore)
+      console.log('section', this.section)
       console.log(this.points)
-
-      this.$postRequest('/exam/examinationPaper/add', {
-        content: this.ruleForm.name,
-        course_id: this.ruleForm.course,
-        difficulty: that.difficulty,
-        endTime: '' + this.ruleForm.date + ' ' + this.ruleForm.startTime,
-        examTime: '' + this.ruleForm.date + ' ' + this.ruleForm.endTime,
-        points: finalPoints,
-        questions: finalQuestions,
-        score: this.totalScore+'',
-        section: this.section+'',
-        sectionScore: this.sectionScore+'',
-        status: 3,
-        creator: 1
-      }).then(res => {
-        console.log(res)
-      })
+      console.log(this.ruleForm.paper)
+       this.$postRequest('/exam/examinationPaper/add', {
+         content: this.ruleForm.name,
+         course_id: this.ruleForm.course,
+         difficulty: that.difficulty,
+         endTime: '' + this.ruleForm.date + ' ' + this.ruleForm.startTime,
+         examTime: '' + this.ruleForm.date + ' ' + this.ruleForm.endTime,
+         points: finalPoints,
+         questions: finalQuestions,
+         score: this.totalScore+'',
+         section: this.section+'',
+         sectionScore: this.sectionScore+'',
+         status: 3,
+         creator: 1
+       }).then(res => {
+         console.log(res)
+         that.$router.go(-1)
+       })
     }
   }
 }
