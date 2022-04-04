@@ -606,6 +606,7 @@ export default {
       let that = this
       let finalQuestions = ''
       let finalPoints = ''
+      console.log(this.questions)
       this.questions.forEach(each => {
         finalQuestions += each + ','
       })
@@ -622,8 +623,8 @@ export default {
          content: this.ruleForm.name,
          course_id: this.ruleForm.course,
          difficulty: that.difficulty,
-         endTime: '' + this.ruleForm.date + ' ' + this.ruleForm.startTime,
-         examTime: '' + this.ruleForm.date + ' ' + this.ruleForm.endTime,
+         endTime: '' + this.ruleForm.date + ' ' + this.ruleForm.endTime,
+         examTime: '' + this.ruleForm.date + ' ' + this.ruleForm.startTime,
          points: finalPoints,
          questions: finalQuestions,
          score: this.totalScore+'',

@@ -63,6 +63,7 @@ export default {
     console.log(this.exam)
     this.duration = this.getHour(that.exam.examTime, that.exam.endTime)
     this.$getRequest('/exam/examinationPaper/info/question/' + this.exam.id).then(res => {
+      console.log(res)
       if (res.data) {
         that.questions = res.data
         that.questions.forEach(each => {
