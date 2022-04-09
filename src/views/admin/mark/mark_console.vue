@@ -585,6 +585,10 @@ export default {
   display: none;
 }
 
+:deep(.el-transfer__button:first-child) {
+  display: none;
+}
+
 [v-cloak] {
   display: none;
 }

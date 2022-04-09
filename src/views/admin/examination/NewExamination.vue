@@ -16,7 +16,7 @@
         style="width: 77%;display: flex;justify-content: center;flex-direction: column;align-items: center;height: calc(100vh)">
       <el-scrollbar style="width: 100%;">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" label-position="top"
-                 v-if="step===1" style="width: 90%;margin-left: 5%;margin-top: 5%">
+                 v-if="step===1" style="width: 90%;margin-left: 5%;margin-top: 15%">
           <el-row style="margin-bottom: 3%">
             <el-col :span="10">
               <el-form-item label="考试名称" prop="name">
@@ -76,7 +76,7 @@
             </el-button>
           </el-row>
         </el-form>
-        <div v-if="step===2" style="width: 90%;margin-left: 5%">
+        <div v-if="step===2" style="width: 90%;margin-left: 5%;margin-top: 10%">
           <div
               style="width: 100%;background-color: #F7F7F7;display:flex;justify-content:center;padding: 1%;border-radius: 10px">
             <div style="width: 100%;background-color: #D7D7D7;border-radius: 10px;padding: 1%">
@@ -106,7 +106,7 @@
             </div>
           </div>
           <div
-              style="display: flex;flex-direction: row;margin-top: 5%;width: 80%;margin-left: 10%;justify-content: space-between">
+              style="display: flex;flex-direction: row;margin-top: 10%;width: 80%;margin-left: 10%;justify-content: space-between">
             <div
                 style="width: 100px;height:100px;border-radius: 10px;display:flex;flex-direction: column;align-items: center;justify-content: center;border-style: solid;border-width: 1px;border-color: #D7D7D7"
                 @click="step = 3">
@@ -120,9 +120,9 @@
               <div>手动组卷</div>
             </div>
           </div>
-          <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="step = 1">上一步</el-button>
+          <el-button style="margin-left:3%;margin-top: 10%" size="medium" @click="step = 1">上一步</el-button>
         </div>
-        <div v-if="step == 3" style="width: 90%;display: flex;flex-direction: column;margin: 5%">
+        <div v-if="step === 3" style="width: 90%;display: flex;flex-direction: column;margin: 5%">
           <div
               style="padding: 15px;border-radius: 8px;background-color: #fdfdfe;box-sizing: border-box;box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.35);">
             <div style="font-size: 20px;font-weight: bold;margin-bottom: 5%">试卷统计信息</div>
@@ -155,7 +155,7 @@
           </div>
           <div style="display: flex;flex-direction: row">
             <el-button style="margin-left:3%;margin-top: 3%" size="medium" @click="goPrevious">上一步</el-button>
-            <el-button style="margin-left:3%;margin-top: 3%" size="medium" type="primary" @click="start">开始组卷
+            <el-button style="margin-left:3%;margin-top: 3%" size="medium" type="primary" @click="this.$router.go(-1)">开始组卷
             </el-button>
             <el-button type="primary" size="medium" style="margin-left:3%;margin-top: 3%" @click="addSection">
               <el-icon class="el-icon--right">
