@@ -108,8 +108,9 @@
                 <el-button style="margin-top: 5%" type="primary" plain @click="dialogFormVisible = true">调整阅卷人
                 </el-button>
               </div>
-              <div style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 1%"
-                   v-if="dialogFormVisible">
+              <div
+                  style="width: 50%;border-style: solid;border-width: 1px;border-color: #D7D7D7;padding: 1%;justify-content: center;display: flex;flex-direction: column;align-items: center"
+                  v-if="dialogFormVisible">
                 <el-transfer
                     filterable
                     :filter-method="filterMethod"
@@ -379,6 +380,7 @@ export default {
           data: examiner_progress[i]
         })
       }
+      examiner_names[examiner_names.length] = '总计'
       console.log(series)
       console.log(examiners)
       for (let i = 0; i < examiner_progress[0].length; i++) {
@@ -417,7 +419,7 @@ export default {
           }
         },
         legend: {
-          data: examiners
+          data: examiner_names
         },
         xAxis: [
           {
@@ -582,6 +584,10 @@ export default {
 }
 
 :deep(.element.style) {
+  display: none;
+}
+
+:deep(.el-transfer__button:first-child) {
   display: none;
 }
 
