@@ -124,7 +124,7 @@ export default {
     created(){
       let that=this
       this.account=this.$route.query.id
-      this.$getRequest('/user/teacher/info?account=000001').then(res=>{
+      this.$getRequest('/user/teacher/info/000001').then(res=>{
         if(res){
           that.info=res.data
 

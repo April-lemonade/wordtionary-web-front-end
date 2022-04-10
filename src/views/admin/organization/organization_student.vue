@@ -67,35 +67,27 @@ export default {
 
                 },
                  {
-                    number:1912190112,
-                    name:"陈恒冠",
+                    number:1912190113,
+                    name:"陈恒家",
                     sex:"男",
                     school:"工商管理学院",
                     class:"工商管理2001"
 
                 },
                  {
-                    number:1912190112,
-                    name:"陈恒冠",
+                    number:1912190102,
+                    name:"潘云安",
                     sex:"男",
-                    school:"工商管理学院",
-                    class:"工商管理2001"
+                    school:"旅游与城乡规划学院",
+                    class:"旅游管理2001"
 
                 },
                  {
-                    number:1912190112,
-                    name:"陈恒冠",
+                    number:1912190117,
+                    name:"张冠以",
                     sex:"男",
-                    school:"工商管理学院",
-                    class:"工商管理2001"
-
-                },
-                 {
-                    number:1912190112,
-                    name:"陈恒冠",
-                    sex:"男",
-                    school:"工商管理学院",
-                    class:"工商管理2001"
+                    school:"旅游与城乡规划学院",
+                    class:"旅游管理2001"
 
                 }
 
@@ -121,7 +113,36 @@ export default {
             input.style.filter="drop-shadow(80px 0 black)";
         }
      
+    },
+    mounted(){
+         this.data = []
+    let that = this
+    this.$getRequest('/user/faculty/list').then(res => {
+      if (res.data) {
+        for (let i = 0; i < res.data.length; i++) {
+          let id1 = res.data[i].id
+          that.data.push({
+            id: res.data[i].id,
+            label: res.data[i].facultyName,
+            disabled: true,
+            children: []
+          })
+          that.$getRequest('/user/course/list?facultyId=' + res.data[i].id).then(res => {
+            for (let j = 0; j < res.data.data.length; j++) {
+              let id = res.data.data[j].id + i
+              that.data[i].children.push({
+                id: id,
+                courseId: res.data.data[j].id,
+                institutionId: id1,
+                label: res.data.data[j].course
+              })
+            }
+          })
+        }
+      }
+    })
     }
+
 
 
 }

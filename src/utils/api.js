@@ -32,7 +32,7 @@ axios.interceptors.response.use(success => {
 })
 
 let base = 'http://121.196.198.132:7002';
-let Authorization = 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX3R5cGUiOjMsImNyZWF0ZWQiOjE2NDc3NDU1NjM5NTYsInVzZXJfYWNjb3VudCI6ImFkbWluIiwiZXhwIjoxNjQ4OTU1MTYzfQ.HFPxc1BlEw_zS6QSL9KyTR0j2qzIAPsbhC_br1UGgqu9_TPHLzDrqo9odJrwHJ97lKQzRn-r1shTLLgMy6Rnnw';
+let Authorization = 'eyJhbGciOiJIUzUxMiJ9.eyJ1c2VyX3R5cGUiOjMsImNyZWF0ZWQiOjE2NDg5Njk1NDk3NjAsInVzZXJfYWNjb3VudCI6ImFkbWluIiwiZXhwIjoxNjUwMTc5MTQ5fQ.upBC-CyUciGzxvpQCCHpIcnFUe_K3NRdp8dbh62jXDFq_37Tfvx24kqpUrvWZhv-CGGxXd6hCDcSNQ97vBG8WA';
 
 export const postKeyValueRequest = (url, params) => {
   return axios({

@@ -52,10 +52,10 @@
                       <span class="course" >思修</span>
                   </div>
                     <div style="width:200px;height:30px;color: rgba(51, 51, 51, 0.65)">
-                      <span class="course" >思修</span>
+                      <span class="course" >马原</span>
                   </div>
                     <div style="width:200px;height:30px;color: rgba(51, 51, 51, 0.65)">
-                      <span class="course" >思修</span>
+                      <span class="course" >毛概</span>
                   </div>
               </div>
           </div>
