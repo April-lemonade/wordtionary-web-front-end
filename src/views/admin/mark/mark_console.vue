@@ -122,7 +122,7 @@
                 <div slot="footer" class="dialog-footer"
                      style="margin-top: 3%;display:flex;flex-direction:row;justify-content:center">
                   <el-button @click="dialogFormVisible = false">取 消</el-button>
-                  <el-button type="primary" @click="editExaminer">确 定</el-button>
+                  <el-button type="primary" @click="editExaminer(props.row.questionIndex)">确 定</el-button>
                 </div>
               </div>
               <div id="progress1"
@@ -452,9 +452,8 @@ export default {
         myChart.resize();
       });
     },
-    editExaminer() {
-      console.log('editExaminer')
-      console.log("originalValue", this.originalValue.indexOf("000004"))
+    editExaminer(questionIndex) {
+      console.log(questionIndex)
       console.log(this.value)
       this.dialogFormVisible = false
       let that = this
@@ -467,14 +466,15 @@ export default {
       console.log("teacherAccount", teacherAccount)
       if (teacherAccount) {
         teacherAccount.forEach(each => {
-          that.$postRequest('/exam/reviewed/set/teacher?examinationPaperId=' + this.exam.id + '&questionIndex=' + this.questionDetail.id + "&teacherAccount=" + each + '').then(res => {
+          that.$postRequest('/exam/reviewed/set/teacher?examinationPaperId=' + this.exam.id + '&questionIndex=' + questionIndex + "&teacherAccount=" + each + '').then(res => {
             if (res) {
               console.log(res)
+              window.location.reload()
             }
           })
         })
       }
-      window.location.reload()
+
     }
   },
   created() {

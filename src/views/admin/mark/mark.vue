@@ -95,13 +95,16 @@ export default {
         }
       }
     })
-    this.$postRequest('/exam/examinationPaper/list').then(res => {
+    this.$postRequest('/exam/examinationPaper/list?size=15').then(res => {
       if (res.data) {
+        console.log(res.data)
         let exams = []
         res.data.data.forEach(each => {
+          console.log(each)
           if (each.status === 5)
             exams[exams.length] = each
         })
+        // console.log(exams)
         that.exams = exams
       }
     })

@@ -619,6 +619,7 @@ export default {
       console.log('section', this.section)
       console.log(this.points)
       console.log(this.ruleForm.paper)
+      console.log(this.ruleForm.endTime)
        this.$postRequest('/exam/examinationPaper/add', {
          content: this.ruleForm.name,
          course_id: this.ruleForm.course,

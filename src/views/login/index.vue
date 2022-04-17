@@ -1,6 +1,7 @@
 <template>
   <div class="container"
        style="display:flex;justfy-content:center;background:rgba(242, 242, 242, 0.8);align-items: center;">
+<!--    <img src="http://121.196.198.132:7002/exam/examsystem/images/ffb228d9-5f64-4982-a9e1-38c50dfe089c.jpg"/>-->
     <div class="loginframe"
          style="height:100%;width:50%;background: #464969;;align-items:center;float:left;display:flex;">
       <div style="display:flex;justify-content:center;flex-wrap:wrap;width:100%">
@@ -64,7 +65,7 @@ export default {
   methods: {
     login() {
       let that = this
-      this.$getRequest('/user/auth/login', {
+      this.$axios.get('http://121.196.198.132:7002/user/auth/login', {
         account: that.loginForm.username,
         pwd: that.loginForm.password
       }).then(res => {
