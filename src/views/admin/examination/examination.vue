@@ -30,10 +30,8 @@
       暂无相关考试
     </div>
     <div v-if="exams.length!==0" style="width: 77%">
-
       <div style="height: calc(100vh - 70px)">
-
-        <el-scrollbar>
+  <el-scrollbar>
           <el-button type="primary" @click="goNew" style="margin-left:3%;margin-top: 3%;">发布考试
           </el-button>
           <div v-for="(exam,index) in exams" :key="exam.id"
@@ -90,7 +88,7 @@
             </div>
 
           </div>
-        </el-scrollbar>
+            </el-scrollbar>
       </div>
 
     </div>

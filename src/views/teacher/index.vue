@@ -16,13 +16,13 @@
       <el-aside
           style="width:75px;background: #40444d;height:calc(100vh - 70px);justify-content:center;display:flex;flex-wrap:wrap">
         <div style="justify-content:center;display:flex;flex-wrap:wrap;width:100%;height:200px;margin-top:20px">
-          <router-link to="/admin/home" style="justify-content:center:height:20px">
+          <router-link to="/teacher/home" style="justify-content:center:height:20px">
             <div class="navframe">
               <img src="../../assets/home_icon.svg" style="width:25px;height:20px">
               <div style="width:100%;text-align:center">主页</div>
             </div>
           </router-link>
-          <router-link to="/admin/questionset" style="justify-content:center">
+          <router-link to="/teacher/questionset" style="justify-content:center">
             <div class="navframe">
               <img src="../../assets/questionset_icon.svg" style="width:20px;height:25px">
               <div style="width:100%;text-align:center">题库</div>
@@ -46,7 +46,7 @@
                         <div style="width:100%;text-align:center">监考</div>
                       </div>
                     </router-link>-->
-          <router-link to="/admin/grade" style="justify-content:center">
+          <router-link to="/teacher/grade" style="justify-content:center">
             <div class="navframe">
               <img src="../../assets/grade_icon.svg" style="width:25px;height:20px">
               <div style="width:100%;text-align:center">成绩</div>

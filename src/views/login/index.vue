@@ -20,7 +20,7 @@
                 <el-button type="text" style="padding:0;float:right;color: #f3cb65">忘记密码？</el-button>
               </div>
 
-              <el-input style="height:100%" v-model="loginForm.password"></el-input>
+              <el-input show-password style="height:100%" v-model="loginForm.password"></el-input>
             </el-form-item>
             <el-form-item style="margin-top:50px">
               <el-button type="primary" style="margin:0 auto;height:50px;width:100%;background: #5a61aa;border:none"
