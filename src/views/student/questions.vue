@@ -160,15 +160,14 @@ export default {
   components: {ArrowRightBold, ArrowLeftBold, TinymceEditor},
   init: {
     selector: "#tinymce", //tinymce的id
-    language_url: "/tinymce/langs/zh_CN.js",
+    language_url: "./tinymce/langs/zh_CN.js",
     language: "zh_CN",
-    skin_url: "/tinymce/skins/ui/oxide", //编辑器需要一个skin才能正常工作，所以要设置一个skin_url指向之前复制出来的skin文件
+    skin_url: "./tinymce/skins/ui/oxide", //编辑器需要一个skin才能正常工作，所以要设置一个skin_url指向之前复制出来的skin文件
   },
   data() {
     return {
       msg: 'Welcome to Use Tinymce Editor-liubing.me',
       disabled: false,
-      baseUrl: process.env.NODE_ENV === 'production' ? '/testtinymce' : '',
       language: 'zh_CN',
       skin: 'oxide',
       expand: false,
